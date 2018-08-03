@@ -8,10 +8,12 @@ import torch
 import torch.optim as optim
 import torch.nn as nn
 
-import generator
-import discriminator
-import helpers
+from . import generator
+from . import discriminator
+from . import helpers
 
+
+DEBUG = True
 
 CUDA = False
 VOCAB_SIZE = 5000
@@ -19,13 +21,13 @@ MAX_SEQ_LEN = 20
 START_LETTER = 0
 BATCH_SIZE = 32
 POS_NEG_SAMPLES = 10000
-G_PRETRAIN_EPOCHS = 100
-D_PRETRAIN_STEPS = 50
-D_PRETRAIN_EPOCHS = 3
-G_TRAIN_STEPS = 1
-D_TRAIN_STEPS = 5
-D_TRAIN_EPOCHS = 3
-ADV_TRAIN_ITERS = 50
+G_PRETRAIN_EPOCHS = 0 if DEBUG else 100
+D_PRETRAIN_STEPS = 0 if DEBUG else 50
+D_PRETRAIN_EPOCHS = 0 if DEBUG else 3
+G_TRAIN_STEPS = 1 if DEBUG else 1
+D_TRAIN_STEPS = 1 if DEBUG else 5
+D_TRAIN_EPOCHS = 1 if DEBUG else 3
+ADV_TRAIN_ITERS = 1 if DEBUG else 50
 
 GEN_EMBEDDING_DIM = 32
 GEN_HIDDEN_DIM = 32
@@ -33,10 +35,10 @@ DIS_EMBEDDING_DIM = 64
 DIS_HIDDEN_DIM = 64
 
 NEW_ORACLE = False
-oracle_samples_path = './oracle_samples.trc'
-oracle_state_dict_path = './oracle_EMBDIM32_HIDDENDIM32_VOCAB5000_MAXSEQLEN20.trc'
-pretrained_gen_path = './gen_MLEtrain_EMBDIM32_HIDDENDIM32_VOCAB5000_MAXSEQLEN20.trc'
-pretrained_dis_path = './dis_pretrain_EMBDIM_64_HIDDENDIM64_VOCAB5000_MAXSEQLEN20.trc'
+oracle_samples_path = './oracle/oracle_samples.trc'
+oracle_state_dict_path = './oracle/oracle_EMBDIM32_HIDDENDIM32_VOCAB5000_MAXSEQLEN20.trc'
+pretrained_gen_path = './pretrained/gen_MLEtrain_EMBDIM32_HIDDENDIM32_VOCAB5000_MAXSEQLEN20.trc'
+pretrained_dis_path = './pretrained/dis_pretrain_EMBDIM_64_HIDDENDIM64_VOCAB5000_MAXSEQLEN20.trc'
 
 
 def train_generator_MLE(gen, gen_opt, oracle, real_data_samples, epochs):
