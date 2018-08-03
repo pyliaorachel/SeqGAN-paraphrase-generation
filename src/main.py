@@ -181,9 +181,10 @@ if __name__ == '__main__':
 
     # ADVERSARIAL TRAINING
     print('\nStarting Adversarial Training...')
-    oracle_loss = helpers.batchwise_oracle_nll(gen, oracle, POS_NEG_SAMPLES, BATCH_SIZE, MAX_SEQ_LEN,
-                                               start_letter=START_LETTER, gpu=CUDA)
-    print(f'\nInitial Oracle Sample Loss : {oracle_loss:.4f}')
+    if not DEBUG:
+        oracle_loss = helpers.batchwise_oracle_nll(gen, oracle, POS_NEG_SAMPLES, BATCH_SIZE, MAX_SEQ_LEN,
+                                                   start_letter=START_LETTER, gpu=CUDA)
+        print(f'\nInitial Oracle Sample Loss : {oracle_loss:.4f}')
 
     for i in range(ADV_TRAIN_ITERS):
         print(f'\n--------\nITERATION {i + 1}\n--------')
