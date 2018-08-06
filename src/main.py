@@ -87,7 +87,7 @@ def train_generator_PG(gen, gen_opt, oracle, dis, rollout, num_batches):
         rollout_targets = rollout.rollout(inp, ROLLOUT_NUM)
         rollout_targets_shape = rollout_targets.shape
 
-        rollout_rewards = dis.batchClassify(rollout_targets.reshape(-1, MAX_SEQ_LEN)).reshape(rollout_targets_shape[:-1])
+        rollout_rewards = dis.batchClassify(rollout_targets.view(-1, MAX_SEQ_LEN)).view(rollout_targets_shape[:-1])
         rollout_rewards = torch.mean(rollout_rewards, -1)
         rewards = dis.batchClassify(target).unsqueeze(0)
         total_rewards = torch.cat([rollout_rewards, rewards])

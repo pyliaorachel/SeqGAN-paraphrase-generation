@@ -56,7 +56,7 @@ class Generator(nn.Module):
         """
         inp = autograd.Variable(torch.LongTensor([[start_letter]] * num_samples)) # num_samples x 1
         samples = self.continue_sample_N(inp, 1)
-        return samples.reshape((num_samples, -1)) # remove second dimension used for N
+        return samples.view((num_samples, -1)) # remove second dimension used for N
 
     def continue_sample_N(self, inp, n):
         """
@@ -80,17 +80,17 @@ class Generator(nn.Module):
         h = self.init_hidden(batch_size)
 
         # Encode given subsequences
-        inp_t = inp[:, 0].reshape(-1)
+        inp_t = inp[:, 0].view(-1)
         for i in range(sub_seq_len):
             out, h = self.forward(inp_t, h)             # out: batch_size x vocab_size
             out = torch.multinomial(torch.exp(out), 1)  # batch_size x 1 (sampling from each row); log to turn log_softmax back to softmax
             inp_t = out.view(-1)
 
         # Continue sampling until the end for n times
-        samples[:, :sub_seq_len] = inp.unsqueeze(1).repeat(1, 1, n).reshape(n * batch_size, -1)[:, 1:] # copy inputs to samples
-                                                                                                       # discard start letter
-        h = h.unsqueeze(1).repeat(1, 1, 1, n).reshape(1, -1, self.hidden_dim) # repeat each hidden vec n times
-        inp_t = inp_t.unsqueeze(1).repeat(1, n).reshape(-1)                   # repeat each last timestep n times
+        samples[:, :sub_seq_len] = inp.unsqueeze(1).repeat(1, 1, n).view(n * batch_size, -1)[:, 1:] # copy inputs to samples
+                                                                                                    # discard start letter
+        h = h.unsqueeze(1).repeat(1, 1, 1, n).view(1, -1, self.hidden_dim) # repeat each hidden vec n times
+        inp_t = inp_t.unsqueeze(1).repeat(1, n).view(-1)                   # repeat each last timestep n times
         for i in range(sub_seq_len, self.max_seq_len):
             out, h = self.forward(inp_t, h)
             out = torch.multinomial(torch.exp(out), 1)
@@ -98,7 +98,7 @@ class Generator(nn.Module):
 
             inp_t = out.view(-1)
 
-        samples = samples.reshape(batch_size, n, -1)
+        samples = samples.view(batch_size, n, -1)
         return samples
 
     def rollout(self, inp, rollout_num):
@@ -165,7 +165,7 @@ class Generator(nn.Module):
             out, h = self.forward(inp[i], h) # out is log_softmax
 
             # Loss: log(P(y_t | Y_1:Y_{t-1})) * Q
-            log_probs = torch.gather(out, -1, target.data[i].unsqueeze(1)).reshape(-1)
+            log_probs = torch.gather(out, -1, target.data[i].unsqueeze(1)).view(-1)
             loss += -torch.sum(log_probs * reward[i])
 
         return loss / batch_size
