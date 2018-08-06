@@ -1,4 +1,8 @@
-# Conditional SeqGAN Paraphrase Generation
+# SeqGAN Paraphrase Generation
+
+# Dataset
+
+- [Quora](https://data.quora.com/First-Quora-Dataset-Release-Question-Pairs)
 
 # References
 
