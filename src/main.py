@@ -74,13 +74,11 @@ def train_generator_MLE(gen, gen_opt, oracle, real_data_samples, epochs):
 
         print(f' average_train_NLL = {total_loss:.4f}, oracle_sample_NLL = {oracle_loss:.4f}')
 
-
 def train_generator_PG(gen, gen_opt, oracle, dis, num_batches):
     """
     The generator is trained using policy gradients, using the reward from the discriminator.
     Training is done for num_batches batches.
     """
-
     for batch in range(num_batches):
         s = gen.sample(BATCH_SIZE*2)        # 64 works best
         inp, target = helpers.prepare_generator_batch(s, start_letter=START_LETTER, gpu=CUDA)
@@ -97,13 +95,11 @@ def train_generator_PG(gen, gen_opt, oracle, dis, num_batches):
 
     print(f' oracle_sample_NLL = {oracle_loss:.4f}')
 
-
 def train_discriminator(discriminator, dis_opt, real_data_samples, generator, oracle, d_steps, epochs):
     """
     Training the discriminator on real_data_samples (positive) and generated samples from generator (negative).
     Samples are drawn d_steps times, and the discriminator is trained for epochs epochs.
     """
-
     # generating a small validation set before training (using oracle and generator)
     pos_val = oracle.sample(100)
     neg_val = generator.sample(100)

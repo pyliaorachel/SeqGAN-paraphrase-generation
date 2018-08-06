@@ -5,7 +5,6 @@ import torch.nn.functional as F
 import pdb
 
 class Discriminator(nn.Module):
-
     def __init__(self, embedding_dim, hidden_dim, vocab_size, max_seq_len, gpu=False, dropout=0.2):
         super(Discriminator, self).__init__()
         self.hidden_dim = hidden_dim
@@ -50,7 +49,6 @@ class Discriminator(nn.Module):
         Returns: out
             - out: batch_size ([0,1] score)
         """
-
         h = self.init_hidden(inp.size()[0])
         out = self.forward(inp, h)
         return out.view(-1)
@@ -63,9 +61,7 @@ class Discriminator(nn.Module):
             - inp: batch_size x seq_len
             - target: batch_size (binary 1/0)
         """
-
         loss_fn = nn.BCELoss()
         h = self.init_hidden(inp.size()[0])
         out = self.forward(inp, h)
         return loss_fn(out, target)
-
