@@ -166,6 +166,7 @@ if __name__ == '__main__':
         oracle = oracle.cuda()
         gen = gen.cuda()
         dis = dis.cuda()
+        rollout = rollout.cuda()
         oracle_samples = oracle_samples.cuda()
 
     # PRETRAIN GENERATOR
