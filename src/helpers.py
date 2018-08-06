@@ -13,7 +13,6 @@ def prepare_generator_batch(samples, start_letter=0, gpu=False):
         - inp: batch_size x seq_len (same as target, but with start_letter prepended)
         - target: batch_size x seq_len (Variable same as samples)
     """
-
     batch_size, seq_len = samples.size()
 
     inp = torch.zeros(batch_size, seq_len)
@@ -30,7 +29,6 @@ def prepare_generator_batch(samples, start_letter=0, gpu=False):
 
     return inp, target
 
-
 def prepare_discriminator_data(pos_samples, neg_samples, gpu=False):
     """
     Takes positive (target) samples, negative (generator) samples and prepares inp and target data for discriminator.
@@ -43,7 +41,6 @@ def prepare_discriminator_data(pos_samples, neg_samples, gpu=False):
         - inp: (pos_size + neg_size) x seq_len
         - target: pos_size + neg_size (boolean 1/0)
     """
-
     inp = torch.cat((pos_samples, neg_samples), 0).type(torch.LongTensor)
     target = torch.ones(pos_samples.size()[0] + neg_samples.size()[0])
     target[pos_samples.size()[0]:] = 0
@@ -62,19 +59,16 @@ def prepare_discriminator_data(pos_samples, neg_samples, gpu=False):
 
     return inp, target
 
-
 def batchwise_sample(gen, num_samples, batch_size):
     """
     Sample num_samples samples batch_size samples at a time from gen.
     Does not require gpu since gen.sample() takes care of that.
     """
-
     samples = []
     for i in range(int(ceil(num_samples / float(batch_size)))):
         samples.append(gen.sample(batch_size))
 
     return torch.cat(samples, 0)[:num_samples]
-
 
 def batchwise_oracle_nll(gen, oracle, num_samples, batch_size, max_seq_len, start_letter=0, gpu=False):
     s = batchwise_sample(gen, num_samples, batch_size)
