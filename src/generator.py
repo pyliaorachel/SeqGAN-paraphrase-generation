@@ -9,7 +9,6 @@ import torch.nn.init as init
 
 
 class Generator(nn.Module):
-
     def __init__(self, embedding_dim, hidden_dim, vocab_size, max_seq_len, gpu=False, oracle_init=False):
         super(Generator, self).__init__()
         self.hidden_dim = hidden_dim
@@ -84,7 +83,6 @@ class Generator(nn.Module):
 
             inp should be target with <s> (start letter) prepended
         """
-
         loss_fn = nn.NLLLoss()
         batch_size, seq_len = inp.size()
         inp = inp.permute(1, 0)           # seq_len x batch_size
@@ -111,7 +109,6 @@ class Generator(nn.Module):
 
             inp should be target with <s> (start letter) prepended
         """
-
         batch_size, seq_len = inp.size()
         inp = inp.permute(1, 0)          # seq_len x batch_size
         target = target.permute(1, 0)    # seq_len x batch_size
@@ -125,4 +122,3 @@ class Generator(nn.Module):
                                                                     # out is log_softmax
 
         return loss / batch_size
-
