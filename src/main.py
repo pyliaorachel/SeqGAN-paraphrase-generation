@@ -21,6 +21,7 @@ MAX_SEQ_LEN = 20
 START_LETTER = 0
 BATCH_SIZE = 32
 POS_NEG_SAMPLES = 10000
+ROLLOUT_NUM = 5
 G_PRETRAIN_EPOCHS = 0 if DEBUG else 100
 D_PRETRAIN_STEPS = 0 if DEBUG else 50
 D_PRETRAIN_EPOCHS = 0 if DEBUG else 3
@@ -74,7 +75,7 @@ def train_generator_MLE(gen, gen_opt, oracle, real_data_samples, epochs):
 
         print(f' average_train_NLL = {total_loss:.4f}, oracle_sample_NLL = {oracle_loss:.4f}')
 
-def train_generator_PG(gen, gen_opt, oracle, dis, num_batches):
+def train_generator_PG(gen, gen_opt, oracle, dis, rollout, num_batches):
     """
     The generator is trained using policy gradients, using the reward from the discriminator.
     Training is done for num_batches batches.
@@ -82,10 +83,17 @@ def train_generator_PG(gen, gen_opt, oracle, dis, num_batches):
     for batch in range(num_batches):
         s = gen.sample(BATCH_SIZE*2)        # 64 works best
         inp, target = helpers.prepare_generator_batch(s, start_letter=START_LETTER, gpu=CUDA)
-        rewards = dis.batchClassify(target)
+
+        rollout_targets = rollout.rollout(inp, ROLLOUT_NUM)
+        rollout_targets_shape = rollout_targets.shape
+
+        rollout_rewards = dis.batchClassify(rollout_targets.reshape(-1, MAX_SEQ_LEN)).reshape(rollout_targets_shape[:-1])
+        rollout_rewards = torch.mean(rollout_rewards, -1)
+        rewards = dis.batchClassify(target).unsqueeze(0)
+        total_rewards = torch.cat([rollout_rewards, rewards])
 
         gen_opt.zero_grad()
-        pg_loss = gen.batchPGLoss(inp, target, rewards)
+        pg_loss = gen.batchPGLoss(inp, target, total_rewards)
         pg_loss.backward()
         gen_opt.step()
 
@@ -152,6 +160,7 @@ if __name__ == '__main__':
     
     gen = generator.Generator(GEN_EMBEDDING_DIM, GEN_HIDDEN_DIM, VOCAB_SIZE, MAX_SEQ_LEN, gpu=CUDA)
     dis = discriminator.Discriminator(DIS_EMBEDDING_DIM, DIS_HIDDEN_DIM, VOCAB_SIZE, MAX_SEQ_LEN, gpu=CUDA)
+    rollout = generator.Generator(GEN_EMBEDDING_DIM, GEN_HIDDEN_DIM, VOCAB_SIZE, MAX_SEQ_LEN, gpu=CUDA)
 
     if CUDA:
         oracle = oracle.cuda()
@@ -187,7 +196,7 @@ if __name__ == '__main__':
         # TRAIN GENERATOR
         print('\nAdversarial Training Generator : ', end='')
         sys.stdout.flush()
-        train_generator_PG(gen, gen_optimizer, oracle, dis, G_TRAIN_STEPS)
+        train_generator_PG(gen, gen_optimizer, oracle, dis, rollout, G_TRAIN_STEPS)
 
         # TRAIN DISCRIMINATOR
         print('\nAdversarial Training Discriminator : ')
