@@ -132,8 +132,8 @@ class Generator(nn.Module):
         """
         loss_fn = nn.NLLLoss()
         batch_size, seq_len = inp.size()
-        inp = inp.permute(1, 0)           # seq_len x batch_size
-        target = target.permute(1, 0)     # seq_len x batch_size
+        inp = inp.t()           # seq_len x batch_size
+        target = target.t()     # seq_len x batch_size
         h = self.init_hidden(batch_size)
 
         loss = 0
@@ -156,8 +156,8 @@ class Generator(nn.Module):
             inp should be target with <s> (start letter) prepended
         """
         batch_size, seq_len = inp.size()
-        inp = inp.t()                   # seq_len x batch_size
-        target = target.t()             # seq_len x batch_size
+        inp = inp.t()           # seq_len x batch_size
+        target = target.t()     # seq_len x batch_size
         h = self.init_hidden(batch_size)
 
         loss = 0
