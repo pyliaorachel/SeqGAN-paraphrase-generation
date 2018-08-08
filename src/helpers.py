@@ -1,6 +1,7 @@
 import torch
 from torch.autograd import Variable
 from math import ceil
+import numpy as np
 
 def prepare_generator_batch(samples, start_letter=0, gpu=False):
     """
@@ -79,3 +80,28 @@ def batchwise_oracle_nll(gen, oracle, num_samples, batch_size, max_seq_len, star
         oracle_nll += oracle_loss.data.item()
 
     return oracle_nll / (num_samples / batch_size)
+
+def pad_samples(data, pad_token):
+    """
+    Pad data of variable lengths with pad_token.
+
+    Output: padded_samples, lens
+        - padded_samples: num_samples x max_seq_len
+        - lens: num_samples
+    """
+    num_samples = len(data)
+
+    # Sort by decreasing length
+    data = sorted(data, key=lambda x: len(x), reverse=True)
+
+    # Get length info
+    lens = [len(x) for x in data]
+    max_len = lens[0] 
+
+    # Pad
+    padded_samples = np.ones((num_samples, max_len), dtype=np.int) * pad_token
+
+    for i, seq in enumerate(data):
+        padded_samples[i, :lens[i]] = seq
+
+    return padded_samples, lens
