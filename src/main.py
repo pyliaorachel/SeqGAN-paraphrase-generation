@@ -75,7 +75,7 @@ def train_generator_MLE(gen, gen_opt, oracle, real_data_samples, epochs):
 
         print(f' average_train_NLL = {total_loss:.4f}, oracle_sample_NLL = {oracle_loss:.4f}')
 
-def train_generator_PG(gen, gen_opt, oracle, dis, rollout, num_batches):
+def train_generator_PG(gen, gen_opt, dis, oracle, rollout, num_batches):
     """
     The generator is trained using policy gradients, using the reward from the discriminator.
     Training is done for num_batches batches.
@@ -103,7 +103,7 @@ def train_generator_PG(gen, gen_opt, oracle, dis, rollout, num_batches):
 
     print(f' oracle_sample_NLL = {oracle_loss:.4f}')
 
-def train_discriminator(discriminator, dis_opt, real_data_samples, generator, oracle, d_steps, epochs):
+def train_discriminator(discriminator, dis_opt, generator, oracle, real_data_samples, d_steps, epochs):
     """
     Training the discriminator on real_data_samples (positive) and generated samples from generator (negative).
     Samples are drawn d_steps times, and the discriminator is trained for epochs epochs.
@@ -180,7 +180,7 @@ if __name__ == '__main__':
     # PRETRAIN DISCRIMINATOR
     print('\nStarting Discriminator Training...')
     dis_optimizer = optim.Adagrad(dis.parameters())
-    train_discriminator(dis, dis_optimizer, oracle_samples, gen, oracle, D_PRETRAIN_STEPS, D_PRETRAIN_EPOCHS)
+    train_discriminator(dis, dis_optimizer, gen, oracle, oracle_samples, D_PRETRAIN_STEPS, D_PRETRAIN_EPOCHS)
 
     # torch.save(dis.state_dict(), pretrained_dis_path)
     # dis.load_state_dict(torch.load(pretrained_dis_path))
@@ -197,8 +197,8 @@ if __name__ == '__main__':
         # TRAIN GENERATOR
         print('\nAdversarial Training Generator : ', end='')
         sys.stdout.flush()
-        train_generator_PG(gen, gen_optimizer, oracle, dis, rollout, G_TRAIN_STEPS)
+        train_generator_PG(gen, gen_optimizer, dis, oracle, rollout, G_TRAIN_STEPS)
 
         # TRAIN DISCRIMINATOR
         print('\nAdversarial Training Discriminator : ')
-        train_discriminator(dis, dis_optimizer, oracle_samples, gen, oracle, D_TRAIN_STEPS, D_TRAIN_EPOCHS)
+        train_discriminator(dis, dis_optimizer, gen, oracle, oracle_samples, D_TRAIN_STEPS, D_TRAIN_EPOCHS)
