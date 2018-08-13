@@ -184,9 +184,29 @@ class DataLoader:
             # Move pointer
             if j == n: # reset
                 i = 0
-                # TODO: shuffle here
+                self.shuffle()
             else: # continue
                 i = j
+
+    def shuffle(self):
+        """
+        Shuffle all samples except frozen ones.
+        """
+        num_samples = self.pos_samples.shape[0]
+        
+        self.frozen = (30, 50)
+        if self.frozen is not None:
+            start, end = self.frozen
+            perm = torch.cat([torch.randperm(start), \
+                              torch.LongTensor(list(range(start, end + 1))), \
+                              (torch.randperm(num_samples - end - 1) + end + 1)])
+        else:
+            perm = torch.randperm(num_samples)
+
+        self.pos_samples = self.pos_samples[perm]
+        self.pos_lens = self.pos_lens[perm]
+        self.cond_samples = self.cond_samples[perm]
+        self.cond_lens = self.cond_lens[perm]
 
     def freeze(self, start, end):
         """
@@ -204,3 +224,4 @@ class DataLoader:
     def reset(self):
         self.fetcher = self.fetch()
         self.frozen = None
+        self.shuffle()
