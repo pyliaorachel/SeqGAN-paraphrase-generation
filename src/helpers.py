@@ -3,68 +3,76 @@ from torch.autograd import Variable
 from math import ceil
 import numpy as np
 
-def prepare_generator_batch(samples, start_letter=0, gpu=False):
+def prepare_generator_batch(oracle, gen, batch_size, gpu=False):
     """
-    Takes samples (a batch) and returns
+    Returns samples (a batch) sampled from generator. 
 
-    Inputs: samples, start_letter, cuda
-        - samples: batch_size x seq_len (Tensor with a sample in each row)
-
-    Returns: inp, target
-        - inp: batch_size x seq_len (same as target, but with start_letter prepended)
-        - target: batch_size x seq_len (Variable same as samples)
+    Returns: inp, inp_lens, cond, cond_lens, end_of_dataset
+        - inp, cond: (batch_size * 2) x seq_len
+        - inp_lens, cond_lens: (batch_size * 2)
+        - cond_lens: (batch_size * 2)
     """
-    batch_size, seq_len = samples.size()
+    _, _, cond_ids, end_of_dataset = oracle.sample(batch_size)
+    batch_size = len(cond_ids) # update actual sampled batch size
+    cond, cond_lens = oracle.fetch_cond_samples(cond_ids)
+    target, target_lens = gen.sample(cond)
 
-    inp = torch.zeros(batch_size, seq_len)
-    target = samples
-    inp[:, 0] = start_letter
-    inp[:, 1:] = target[:, :seq_len-1]
-
-    inp = Variable(inp).type(torch.LongTensor)
-    target = Variable(target).type(torch.LongTensor)
+    # Wrap
+    target, target_lens, cond, cond_lens = Variable(target), Variable(target_lens), Variable(cond), Variable(cond_lens)
 
     if gpu:
-        inp = inp.cuda()
-        target = target.cuda()
+        target, target_lens, cond, cond_lens = target.cuda(), target_lens.cuda(), cond.cuda(), cond_lens.cuda()
 
-    return inp, target
+    return target, target_lens, cond, cond_lens, end_of_dataset 
 
-def prepare_discriminator_data(pos_samples, neg_samples, gpu=False):
+def prepare_discriminator_data(oracle, gen, batch_size, is_val=False, gpu=False):
     """
-    Takes positive (target) samples, negative (generator) samples and prepares inp and target data for discriminator.
+    Takes positive (target), negative (generator), and condition sample generators/loaders 
+    to prepare inp and target samples for discriminator.
 
-    Inputs: pos_samples, neg_samples
-        - pos_samples: pos_size x seq_len
-        - neg_samples: neg_size x seq_len
-
-    Returns: inp, target
-        - inp: (pos_size + neg_size) x seq_len
-        - target: pos_size + neg_size (boolean 1/0)
+    Returns: inp, inp_lens, cond, cond_lens, target, end_of_dataset
+        - inp, cond: (batch_size * 2) x seq_len
+        - inp_lens, cond_lens: (batch_size * 2)
+        - target: (batch_size * 2) (boolean 1/0)
     """
-    inp = torch.cat((pos_samples, neg_samples), 0).type(torch.LongTensor)
-    target = torch.ones(pos_samples.size()[0] + neg_samples.size()[0])
-    target[pos_samples.size()[0]:] = 0
+    # Prepare pos, neg, cond samples
+    pos_samples, pos_lens, cond_ids, end_of_dataset = oracle.sample(batch_size, is_val=is_val)
+    batch_size = len(cond_ids) # update actual sampled batch size
+    cond_samples, cond_lens = oracle.fetch_cond_samples(cond_ids)
+    neg_samples, neg_lens = gen.sample(cond_samples)
 
-    # shuffle
-    perm = torch.randperm(target.size()[0])
-    target = target[perm]
-    inp = inp[perm]
+    _, pos_seq_len = pos_samples.shape
+    _, neg_seq_len = neg_samples.shape
+    _, cond_seq_len = cond_samples.shape
 
-    inp = Variable(inp)
-    target = Variable(target)
+    pad_token = oracle.pad_token
+
+    # Concat
+    inp, inp_lens = cat_samples(pos_samples, pos_lens, neg_samples, neg_lens, pad_token)
+    cond, cond_lens = cat_samples(cond_samples, cond_lens, cond_samples, cond_lens, pad_token)
+
+    # Construct target
+    target = torch.ones(batch_size * 2)
+    target[batch_size:] = 0 # first half is pos, second half is neg
+
+    # Shuffle
+    perm = torch.randperm(batch_size * 2)
+    inp, inp_lens, cond, cond_lens, target = inp[perm], inp_lens[perm], cond[perm], cond_lens[perm], target[perm]
+
+    # Wrap
+    inp, inp_lens, cond, cond_lens, target = Variable(inp), Variable(inp_lens), Variable(cond), Variable(cond_lens), Variable(target)
 
     if gpu:
-        inp = inp.cuda()
-        target = target.cuda()
+        inp, inp_lens, cond, cond_lens, target = inp.cuda(), inp_lens.cuda(), cond.cuda(), cond_lens.cuda(), target.cuda()
 
-    return inp, target
+    return inp, inp_lens, cond, cond_lens, target, end_of_dataset
 
 def batchwise_sample(gen, num_samples, batch_size):
     """
     Sample num_samples samples batch_size samples at a time from gen.
     Does not require gpu since gen.sample() takes care of that.
     """
+    # TODO: update gen.sample
     samples = []
     for i in range(int(ceil(num_samples / float(batch_size)))):
         samples.append(gen.sample(batch_size))
@@ -81,27 +89,80 @@ def batchwise_oracle_nll(gen, oracle, num_samples, batch_size, max_seq_len, star
 
     return oracle_nll / (num_samples / batch_size)
 
-def pad_samples(data, pad_token):
+def pad_samples(samples, pad_token):
     """
-    Pad data of variable lengths with pad_token.
+    Pad samples of variable lengths with pad_token.
 
     Output: padded_samples, lens
         - padded_samples: num_samples x max_seq_len
         - lens: num_samples
     """
-    num_samples = len(data)
-
-    # Sort by decreasing length
-    data = sorted(data, key=lambda x: len(x), reverse=True)
+    num_samples = len(samples)
 
     # Get length info
-    lens = [len(x) for x in data]
-    max_len = lens[0] 
+    lens = np.array([len(x) for x in samples])
+    max_len = max(lens)
 
     # Pad
     padded_samples = np.ones((num_samples, max_len), dtype=np.int) * pad_token
 
-    for i, seq in enumerate(data):
+    for i, seq in enumerate(samples):
         padded_samples[i, :lens[i]] = seq
 
+    padded_samples = torch.LongTensor(padded_samples)
+    lens = torch.LongTensor(lens)
     return padded_samples, lens
+
+def cat_samples(samples_1, lens_1, samples_2, lens_2, pad_token):
+    """
+    Concat two batches of samples of variable sizes, and pad with pad_token.
+
+    Inputs:
+        - samples_1, samples_2: num_samples x seq_len
+        - lens_1, lens_2: num_samples
+    Outputs: samples, lens
+        - samples: num_samples x seq_len
+        - lens: num_samples
+    """
+    num_samples = len(samples_1) # same length for samples_1 and samples_2
+    seq_len_1, seq_len_2 = samples_1.shape[1], samples_2.shape[1]
+    max_len = max(seq_len_1, seq_len_2)
+
+    # Concat & pad
+    samples = np.ones((num_samples * 2, max_len), dtype=np.int) * pad_token
+    samples[:num_samples, :seq_len_1] = samples_1
+    samples[num_samples:, :seq_len_2] = samples_2
+    samples = torch.LongTensor(samples)
+    lens = torch.cat([lens_1, lens_2])
+
+    return samples, lens
+
+def trim_trailing_paddings(samples, sample_lens):
+    """
+    Trim trailing pad_tokens to align all rows with the max sequence.
+
+    Inputs:
+        - samples: batch_size x seq_len
+        - sample_lens: batch_size
+    Outputs: samples
+        - samples: batch_size x seq_len
+    """
+    max_seq_len = torch.max(sample_lens)
+    return samples[:, :max_seq_len]
+
+def sort_sample_by_len(samples, lens):
+    """
+    Sort samples by length in descending order.
+
+    Inputs:
+        - samples: batch_size x seq_len
+        - lens: batch_size
+
+    Outputs:
+        - samples: batch_size x seq_len
+        - lens: batch_size
+        - sort_idx: batch_size
+    """
+    lens, sort_idx = torch.sort(lens, descending=True)
+    samples = samples[sort_idx]
+    return samples, lens, sort_idx
