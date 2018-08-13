@@ -1,4 +1,6 @@
 from __future__ import print_function
+import logging
+import time
 from math import ceil
 import sys
 import pdb
@@ -81,7 +83,7 @@ def train_generator_MLE(gen, gen_opt, oracle, epochs):
             i += 1
 
         total_loss /= i # loss in each batch is size_averaged, so divide by num of batches is loss per sample
-        print(f'\n\tAverage_train_NLL = {total_loss:.4f}')
+        logging.info(f'[G_MLE] Average_train_NLL = {total_loss:.4f}')
 
 def train_generator_PG(gen, gen_opt, dis, oracle, rollout, num_batches):
     """
@@ -128,7 +130,7 @@ def train_generator_PG(gen, gen_opt, dis, oracle, rollout, num_batches):
         i += 1
 
     total_loss = total_loss / num_batches 
-    print(f'\n\tAverage_train_NLL = {total_loss:.4f}')
+    logging.info(f'[G_PG] Average_train_NLL = {total_loss:.4f}')
 
 def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs):
     """
@@ -178,13 +180,17 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs):
 
             _, val_acc = dis.batchBCELoss(val_inp, val_inp_lens, val_cond, val_cond_lens, val_target)
             val_acc /= (valid_set_size * 2)
-            print(f'\n\tAverage_loss = {total_loss:.4f}, train_acc = {total_acc:.4f}, val_acc = {val_acc:.4f}')
+            logging.info(f'[D] Average_loss = {total_loss:.4f}, train_acc = {total_acc:.4f}, val_acc = {val_acc:.4f}')
 
     # Release validation set
     oracle.release()
 
 # MAIN
 if __name__ == '__main__':
+    t = time.strftime('%Y-%m-%d_%H:%M:%S', time.gmtime())
+    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO,
+                        filename=f'./log/{t}.log')
+
     '''Create oracle data loader for pos examples, generator & discriminator for adversarial training, and rollout for MC search'''
 
     oracle = dataloader.DataLoader(oracle_path, end_token_str=END_TOKEN, pad_token_str=PAD_TOKEN, gpu=CUDA, light_ver=LIGHT_VER)
