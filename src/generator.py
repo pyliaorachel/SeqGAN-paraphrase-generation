@@ -7,165 +7,263 @@ import pdb
 import math
 import torch.nn.init as init
 
+from . import helpers
+
 
 class Generator(nn.Module):
-    def __init__(self, embedding_dim, hidden_dim, vocab_size, max_seq_len, gpu=False, oracle_init=False):
-        super(Generator, self).__init__()
+    def __init__(self, embedding_dim, hidden_dim, vocab_size, max_seq_len=30, end_token=1, pad_token=0, gpu=False):
+        super().__init__()
+
         self.hidden_dim = hidden_dim
         self.embedding_dim = embedding_dim
         self.max_seq_len = max_seq_len
         self.vocab_size = vocab_size
         self.gpu = gpu
+        self.end_token = end_token
+        self.pad_token = pad_token
 
         self.embeddings = nn.Embedding(vocab_size, embedding_dim)
-        self.gru = nn.GRU(embedding_dim, hidden_dim)
+        self.gru = nn.GRU(embedding_dim, hidden_dim, batch_first=True)
         self.gru2out = nn.Linear(hidden_dim, vocab_size)
 
-        # initialise oracle network with N(0,1)
-        # otherwise variance of initialisation is very small => high NLL for data sampled from the same model
-        if oracle_init:
-            for p in self.parameters():
-                init.normal_(p, 0, 1)
-
     def init_hidden(self, batch_size=1):
-        h = autograd.Variable(torch.zeros(1, batch_size, self.hidden_dim)) # 1 for timesteps
-
-        if self.gpu:
-            return h.cuda()
-        else:
-            return h
+        h = autograd.Variable(torch.zeros(1, batch_size, self.hidden_dim)) # 1 for num_layers * num_directions
+        return h.cuda() if self.gpu else h
 
     def forward(self, inp, hidden):
         """
         Embeds input and applies GRU one token at a time (seq_len = 1)
+
+        Inputs:
+            - inp: batch_size x seq_len (1)
+            - hidden: 1 x batch_size x hidden_dim
         """
-        # input dim                                             # batch_size
         emb = self.embeddings(inp)                              # batch_size x embedding_dim
-        emb = emb.view(1, -1, self.embedding_dim)               # 1 x batch_size x embedding_dim
-        out, hidden = self.gru(emb, hidden)                     # 1 x batch_size x hidden_dim (out)
+        emb = emb.view(-1, 1, self.embedding_dim)               # batch_size x 1 x embedding_dim
+        out, hidden = self.gru(emb, hidden)                     # batch_size x 1 x hidden_dim (out)
         out = self.gru2out(out.view(-1, self.hidden_dim))       # batch_size x vocab_size
         out = F.log_softmax(out, dim=1)
         return out, hidden
 
-    def sample(self, num_samples, start_letter=0):
+    def sample(self, cond):
         """
-        Samples the network and returns num_samples samples of length max_seq_len.
+        Samples the network, returns num_samples samples of length max_seq_len, wrapped in variables.
+        max_seq_len is the max length among all samples; samples shorter than max_seq_len are padded.
 
-        Outputs: samples, hidden
-            - samples: num_samples x max_seq_length (a sampled sequence in each row)
+        Inputs:
+            - cond: num_samples x max_seq_len
+        Outputs: samples, lens
+            - samples: num_samples x max_seq_len_s
+            - lens: num_samples
         """
-        inp = autograd.Variable(torch.LongTensor([[start_letter]] * num_samples)) # num_samples x 1
-        samples = self.continue_sample_N(inp, 1)
-        return samples.reshape((num_samples, -1)) # remove second dimension used for N
+        num_samples = cond.shape[0]
 
-    def continue_sample_N(self, inp, n):
+        out, h = self.encode(cond)
+        out = self.sample_one(out).view(-1, 1)
+        samples, lens = self.continue_sample_N(out, 1, h)
+        return samples.view((num_samples, -1)), lens.view(-1) # samples: remove second dimension used for N; lens: flatten
+
+    def continue_sample_N(self, inp, n, h=None):
         """
         Continue to sample given some previous subsequences. Repeated n times.
         Returns n samples of length max_seq_len for each inp subsequence.
+        max_seq_len is the max length among all samples; samples shorter than max_seq_len are padded.
 
-        Inputs: inp
+        Inputs:
             - inp: batch_size x sub_seq_len
+            - h: num_layers * num_directions, batch_size, hidden_dim
 
-        Outputs: samples, hidden
-            - samples: batch_size x n x max_seq_length
+        Outputs: samples, lens
+            - samples: batch_size x n x max_seq_len
+            - lens: batch_size x n
         """
         batch_size, sub_seq_len = inp.size()
-        sub_seq_len -= 1 # deduce to starting symbol
-
-        samples = torch.zeros(n * batch_size, self.max_seq_len).type(torch.LongTensor)
+        samples = torch.ones(n * batch_size, self.max_seq_len).long() * self.pad_token
         if self.gpu:
             samples = samples.cuda()
             inp = inp.cuda()
 
-        h = self.init_hidden(batch_size)
+        # If raw sequence is given, encode it first, init rollout stuffs correspondingly
+        if h is None: # not encoded, encode input which generates the first output
+            out, h = self.encode(inp)
+            out = self.sample_one(out)
 
-        # Encode given subsequences
-        inp_t = inp[:, 0].reshape(-1)
-        for i in range(sub_seq_len):
-            out, h = self.forward(inp_t, h)             # out: batch_size x vocab_size
-            out = torch.multinomial(torch.exp(out), 1)  # batch_size x 1 (sampling from each row); log to turn log_softmax back to softmax
-            inp_t = out.view(-1)
+            more_samples = out.unsqueeze(0) # for keeping subsequence sequences, starting from last output 
+            l = sub_seq_len + 1             # already one output following the original subsequence
+            lens = torch.ones(n * batch_size).long() * (sub_seq_len + 1)        # init lengths
+            has_ended = torch.zeros(n * batch_size).byte()                      # which sequences has observed end token 
+            has_ended[out == self.end_token] = 1
+        else: # already encoded, take last input token as last output
+            out = inp[:, -1]
 
-        # Continue sampling until the end for n times
-        samples[:, :sub_seq_len] = inp.unsqueeze(1).repeat(1, 1, n).reshape(n * batch_size, -1)[:, 1:] # copy inputs to samples
-                                                                                                       # discard start letter
-        h = h.unsqueeze(1).repeat(1, 1, 1, n).reshape(1, -1, self.hidden_dim) # repeat each hidden vec n times
-        inp_t = inp_t.unsqueeze(1).repeat(1, n).reshape(-1)                   # repeat each last timestep n times
-        for i in range(sub_seq_len, self.max_seq_len):
-            out, h = self.forward(inp_t, h)
-            out = torch.multinomial(torch.exp(out), 1)
-            samples[:, i] = out.data[:, 0]
+            more_samples = torch.LongTensor()
+            l = sub_seq_len
+            lens = torch.ones(n * batch_size).long() * (sub_seq_len)
+            has_ended = torch.zeros(n * batch_size).byte()
 
-            inp_t = out.view(-1)
+        # Monte Carlo search: continue sampling until the end for n times
+        samples[:, :sub_seq_len] = inp.unsqueeze(1).repeat(1, 1, n).view(n * batch_size, -1) # copy inputs to samples
+        h = h.unsqueeze(1).repeat(1, 1, 1, n).view(1, -1, self.hidden_dim)                   # repeat each hidden vec n times
+        out = out.unsqueeze(1).repeat(1, n).view(-1)                                         # repeat each last timestep n times
 
-        samples = samples.reshape(batch_size, n, -1)
-        return samples
+        if self.gpu:
+            has_ended = has_ended.cuda()
+            lens = lens.cuda()
+            more_samples = more_samples.cuda()
 
-    def rollout(self, inp, rollout_num):
+        # TODO: add teacher forcing
+        while not has_ended.all() and l < self.max_seq_len:             # end if all sequences ended, or exceeded max len
+            out, h = self.forward(out, h)
+            out = self.sample_one(out)
+
+            out[has_ended] = self.pad_token                             # pad ended sequences
+            more_samples = torch.cat([more_samples, out.unsqueeze(0)])  # append new samples
+            has_ended[out == self.end_token] = 1                        # update ended sequences
+            lens[has_ended ^ 1] += 1                                    # update lengths of not-ended sequences
+
+            l += 1
+
+        # Append to original subsequence
+        more_samples = more_samples.t()
+        more_samples[has_ended ^ 1, -1] = self.end_token                # force sequences to end
+        more_seq_len = more_samples.shape[1]
+        samples[:, sub_seq_len:sub_seq_len+more_seq_len] = more_samples # concat to original subsequence
+        
+        # Trim
+        samples = helpers.trim_trailing_paddings(samples, lens)
+
+        # Reshape
+        lens = lens.view(batch_size, n, -1)
+        samples = samples.view(batch_size, n, -1)
+        return samples, lens
+
+    def rollout(self, inp, inp_lens, cond, cond_lens, rollout_num):
         """
         Rollout rollout_num times for each timestep of inp, based on this generator's policy.
         Returns all rollout sequences.
 
-        Inputs: inp, rollout_num
-            - inp: batch_size x seq_len
+        Inputs:
+            - inp, cond: batch_size x seq_len
+            - inp_lens, cond_lens: batch_size
 
-        Outputs: rollout_targets
-            - rollout_targets: (seq_len - 1) x batch_size x rollout_num x seq_len
+        Outputs: rollout_targets, rollout_target_lens, rollout_cond, rollout_cond_lens
+            - rollout_targets, rollout_cond: (seq_len - 1) x batch_size x rollout_num x seq_len
+            - rollout_target_lens, rollout_cond_lens: (seq_len - 1) x batch_size x rollout_num x seq_len
         """
-        batch_size, seq_len = inp.size()
-        rollout_targets = torch.zeros(seq_len - 1, batch_size, rollout_num, self.max_seq_len).type(torch.LongTensor)
+        # Encode cond
+        out, h = self.encode(cond)
 
-        for t in range(2, seq_len+1):
-            rollout_targets[t-2, :] = self.continue_sample_N(inp[:, :t], rollout_num)
+        # Rollout
+        batch_size, seq_len = inp.shape
+        rollout_targets = torch.ones(seq_len - 1, batch_size, rollout_num, self.max_seq_len).long() * self.pad_token
+        rollout_target_lens = torch.zeros(seq_len - 1, batch_size, rollout_num).long()
 
-        return rollout_targets
+        for t in range(seq_len-1):
+            out, h = self.forward(inp[:, t], h)
+            samples, lens = self.continue_sample_N(inp[:, :t+1], rollout_num, h)
+            lens = lens.view(batch_size, -1)
+            rollout_targets[t, :], rollout_target_lens[t, :] = samples, lens 
+        
+        # Repeat conditions
+        rollout_cond = cond.view(1, batch_size, 1, -1) \
+                           .repeat((seq_len - 1), 1, 1, rollout_num) \
+                           .view((seq_len - 1), batch_size, rollout_num, -1)
+        rollout_lens = cond_lens.view(1, batch_size, -1) \
+                                .repeat((seq_len - 1), 1, rollout_num) \
+                                .view((seq_len - 1), batch_size, rollout_num)
 
-    def batchNLLLoss(self, inp, target):
+        return rollout_targets, rollout_target_lens, rollout_cond, rollout_lens
+
+    def encode(self, inp):
+        """
+        Encode the given input.
+
+        Inputs:
+            - inp: batch_size x inp_seq_len
+        Outputs: out, h
+            - out: batch_size x vocab_size (output for last timestep)
+            - h: num_layers * num_directions, batch_size, hidden_dim
+        """
+        # TODO: move to another encoder class, with padding considered
+        batch_size, inp_seq_len = inp.shape
+        inp = inp.t()           # inp_seq_len x batch_size
+        h = self.init_hidden(batch_size)
+
+        for i in range(inp_seq_len):
+            out, h = self.forward(inp[i], h)
+        
+        return out, h
+
+    def sample_one(self, out):
+        """
+        Sample one batch from distribution.
+
+        Inputs:
+            - out: batch_size x vocab_size
+        """
+        # Sampling from each row; exp to turn log_softmax back
+        return torch.multinomial(torch.exp(out), 1).view(-1) 
+
+    def batchNLLLoss(self, inp, inp_lens, target, target_lens, teacher_forcing_ratio=0.6):
         """
         Returns the NLL Loss for predicting target sequence.
 
-        Inputs: inp, target
-            - inp: batch_size x seq_len
-            - target: batch_size x seq_len
-
-            inp should be target with <s> (start letter) prepended
+        Inputs:
+            - inp: batch_size x inp_seq_len
+            - inp_lens: batch_size
+            - target: batch_size x target_seq_len
+            - target_lens: batch_size
         """
         loss_fn = nn.NLLLoss()
-        batch_size, seq_len = inp.size()
-        inp = inp.t()           # seq_len x batch_size
-        target = target.t()     # seq_len x batch_size
-        h = self.init_hidden(batch_size)
+        batch_size, target_seq_len = target.size()
 
-        loss = 0
-        for i in range(seq_len):
-            out, h = self.forward(inp[i], h)
-            loss += loss_fn(out, target[i])
+        # Encode inp
+        out, h = self.encode(inp)
 
-        return loss     # per batch
+        # Decode to output, accumulate loss
+        target = target.t()                         # target_seq_len x batch_size
+        loss = loss_fn(out, target[0])              # loss init to first output's loss
 
-    def batchPGLoss(self, inp, target, reward):
+        teacher_forcing = np.random.uniform() < teacher_forcing_ratio
+        if teacher_forcing: # feeds target as input to each decoder step
+            for i in range(1, target_seq_len):
+                out, h = self.forward(target[i-1], h)
+                loss += loss_fn(out, target[i])
+        else:               # feeds last output as input to each decoder step
+            last_out = self.sample_one(out) 
+            for i in range(1, target_seq_len):
+                out, h = self.forward(last_out, h)
+                loss += loss_fn(out, target[i])
+                last_out = self.sample_one(out) 
+
+        return loss # per batch
+
+    def batchPGLoss(self, inp, target, rewards):
         """
         Returns a pseudo-loss that gives corresponding policy gradients (on calling .backward()).
         Inspired by the example in http://karpathy.github.io/2016/05/31/rl/
 
-        Inputs: inp, target
+        Inputs:
             - inp: batch_size x seq_len
             - target: batch_size x seq_len
-            - reward: seq_len x batch_size (discriminator reward for each token in the sentence)
+            - rewards: seq_len x batch_size (discriminator reward for each token in the sentence)
 
             inp should be target with <s> (start letter) prepended
         """
-        batch_size, seq_len = inp.size()
-        inp = inp.t()           # seq_len x batch_size
+        batch_size, seq_len = target.shape
         target = target.t()     # seq_len x batch_size
         h = self.init_hidden(batch_size)
 
-        loss = 0
-        for i in range(seq_len):
-            out, h = self.forward(inp[i], h) # out is log_softmax
+        # Encode inp, get the first output
+        out, h = self.encode(inp) # out is log_softmax
 
-            # Loss: log(P(y_t | Y_1:Y_{t-1})) * Q
-            log_probs = torch.gather(out, -1, target.data[i].unsqueeze(1)).reshape(-1)
-            loss += -torch.sum(log_probs * reward[i])
+        # Accumulate loss: log(P(y_t | Y_1:Y_{t-1})) * Q
+        log_probs = torch.gather(out, -1, target[0].unsqueeze(1)).view(-1)
+        loss = -torch.sum(log_probs * rewards[0])
+        for i in range(seq_len-1):
+            out, h = self.forward(target[i], h) 
+
+            log_probs = torch.gather(out, -1, target.data[i+1].unsqueeze(1)).view(-1)
+            loss += -torch.sum(log_probs * rewards[i+1])
 
         return loss / batch_size
