@@ -1,8 +1,10 @@
 from __future__ import print_function
+import argparse
 import logging
 import time
 from math import ceil
 import sys
+import os
 import pdb
 
 import numpy as np
@@ -14,10 +16,15 @@ import torch.nn.functional as F
 from . import generator
 from . import discriminator
 from . import dataloader
+from . import pathbuilder
 from .params import *
 from . import helpers
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description='Train GAN model')
+    # TODO: add arguments
+    return parser.parse_args()
 
 def train_generator_MLE(gen, gen_opt, oracle, epochs):
     """
@@ -158,46 +165,55 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs):
 
 # MAIN
 if __name__ == '__main__':
-    t = time.strftime('%Y-%m-%d_%H:%M:%S', time.gmtime())
+    t = time.strftime('%Y-%m-%d_%H:%M:%S', time.localtime())
+
+    args = parse_args()
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO,
                         filename=f'./log/{t}.log')
+    pb = pathbuilder.PathBuilder(model_params, training_params, pretrain_params)
 
     '''Create oracle data loader for pos examples, generator & discriminator for adversarial training, and rollout for MC search'''
 
-    oracle = dataloader.DataLoader(oracle_path, end_token_str=END_TOKEN, pad_token_str=PAD_TOKEN, gpu=CUDA, light_ver=LIGHT_VER)
+    oracle = dataloader.DataLoader(dataset_path, end_token_str=END_TOKEN, pad_token_str=PAD_TOKEN, gpu=CUDA, light_ver=LIGHT_VER)
     oracle.load()
     end_token, pad_token, max_seq_len, vocab_size = oracle.end_token, oracle.pad_token, oracle.max_seq_len, len(oracle.vocab) 
     max_seq_len += MAX_SEQ_LEN_PADDING # give room for longer sequences
 
-    gen = generator.Generator(GEN_EMBEDDING_DIM, GEN_HIDDEN_DIM, vocab_size, end_token=end_token, pad_token=pad_token,
+    gen = generator.Generator(G_ED, G_HD, vocab_size, end_token=end_token, pad_token=pad_token,
                               max_seq_len=max_seq_len, gpu=CUDA)
-    dis = discriminator.Discriminator(DIS_EMBEDDING_DIM, DIS_HIDDEN_DIM, vocab_size, end_token=end_token, pad_token=pad_token,
+    dis = discriminator.Discriminator(D_ED, D_HD, vocab_size, end_token=end_token, pad_token=pad_token,
                                       max_seq_len=max_seq_len, gpu=CUDA)
-    rollout = generator.Generator(GEN_EMBEDDING_DIM, GEN_HIDDEN_DIM, vocab_size, end_token=end_token, pad_token=pad_token,
+    rollout = generator.Generator(G_ED, G_HD, vocab_size, end_token=end_token, pad_token=pad_token,
                                   max_seq_len=max_seq_len, gpu=CUDA)
+
+    if pb.pretrain:
+        gen.load_state_dict(torch.load(pb.model_path('gen')))
+        dis.load_state_dict(torch.load(pb.model_path('dis')))
+
+    gen_optimizer = optim.Adam(gen.parameters(), lr=1e-2)
+    dis_optimizer = optim.Adagrad(dis.parameters())
 
     if CUDA:
         gen = gen.cuda()
         dis = dis.cuda()
         rollout = rollout.cuda()
 
-    '''Pretrain generator'''
+    if not pb.pretrain: # only pretrain G and D if fresh new training
+        '''Pretrain generator'''
 
-    print('Starting Generator MLE Training...')
-    gen_optimizer = optim.Adam(gen.parameters(), lr=1e-2)
-    train_generator_MLE(gen, gen_optimizer, oracle, G_PRETRAIN_EPOCHS)
+        print('Starting Generator MLE Training...')
+        train_generator_MLE(gen, gen_optimizer, oracle, G_PRETRAIN_EPOCHS)
 
-    # torch.save(gen.state_dict(), pretrained_gen_path)
-    # gen.load_state_dict(torch.load(pretrained_gen_path))
+        torch.save(gen.state_dict(), pb.model_pretrain_path('gen'))
+        # gen.load_state_dict(torch.load(pb.model_pretrain_path('gen')))
 
-    '''Pretrain discriminator'''
+        '''Pretrain discriminator'''
 
-    print('\nStarting Discriminator Training...')
-    dis_optimizer = optim.Adagrad(dis.parameters())
-    train_discriminator(dis, dis_optimizer, gen, oracle, D_PRETRAIN_STEPS, D_PRETRAIN_EPOCHS)
+        print('\nStarting Discriminator Training...')
+        train_discriminator(dis, dis_optimizer, gen, oracle, D_PRETRAIN_STEPS, D_PRETRAIN_EPOCHS)
 
-    # torch.save(dis.state_dict(), pretrained_dis_path)
-    # dis.load_state_dict(torch.load(pretrained_dis_path))
+        torch.save(dis.state_dict(), pb.model_pretrain_path('dis'))
+        # dis.load_state_dict(torch.load(pb.model_pretrain_path('dis')))
 
     '''Adversarial training'''
 
@@ -214,3 +230,11 @@ if __name__ == '__main__':
 
         print('\nAdversarial Training Discriminator : ')
         train_discriminator(dis, dis_optimizer, gen, oracle, D_TRAIN_STEPS, D_TRAIN_EPOCHS)
+
+        if i % SAVE_MODEL_ITER == 0:
+            if pb.pretrain:
+                params = { 'gan': { 'iter': SAVE_MODEL_ITER } }
+                pb.increment_training_params(params)
+
+            torch.save(gen.state_dict(), pb.model_path('gen'))
+            torch.save(dis.state_dict(), pb.model_path('dis'))
