@@ -109,3 +109,4 @@ venv.bak/
 # Others
 *.swp
 backup/
+model/
