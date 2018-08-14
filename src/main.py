@@ -14,38 +14,9 @@ import torch.nn.functional as F
 from . import generator
 from . import discriminator
 from . import dataloader
+from .params import *
 from . import helpers
 
-
-DEBUG = True 
-LIGHT_VER = True # Light version of dataset
-
-END_TOKEN = '<E>'
-PAD_TOKEN = '<P>'
-
-CUDA = False
-MAX_SEQ_LEN_PADDING = 10
-BATCH_SIZE = 32
-ROLLOUT_NUM = 3
-TEACHER_FORCING_RATIO = 0.6
-G_PRETRAIN_EPOCHS = 1 if DEBUG else 100
-D_PRETRAIN_STEPS = 1 if DEBUG else 50
-D_PRETRAIN_EPOCHS = 1 if DEBUG else 3
-G_TRAIN_STEPS = 1 if DEBUG else 1
-D_TRAIN_STEPS = 1 if DEBUG else 5
-D_TRAIN_EPOCHS = 1 if DEBUG else 3
-ADV_TRAIN_ITERS = 1 if DEBUG else 50
-
-GEN_EMBEDDING_DIM = 32
-GEN_HIDDEN_DIM = 32
-DIS_EMBEDDING_DIM = 64
-DIS_HIDDEN_DIM = 64
-
-VALID_SET_SIZE_RATIO = 0.2
-
-oracle_path = './dataset/quora_duplicate_questions.tsv'
-pretrained_gen_path = f'./pretrained/gen_MLEtrain_EMBDIM{GEN_EMBEDDING_DIM}_HIDDENDIM{GEN_HIDDEN_DIM}.trc'
-pretrained_dis_path = f'./pretrained/dis_pretrain_EMBDIM{DIS_EMBEDDING_DIM}_HIDDENDIM{DIS_HIDDEN_DIM}.trc'
 
 
 def train_generator_MLE(gen, gen_opt, oracle, epochs):
