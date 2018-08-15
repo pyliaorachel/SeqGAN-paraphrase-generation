@@ -168,9 +168,9 @@ if __name__ == '__main__':
     t = time.strftime('%Y-%m-%d_%H:%M:%S', time.localtime())
 
     args = parse_args()
-    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO,
-                        filename=f'./log/{t}.log')
     pb = pathbuilder.PathBuilder(model_params, training_params, pretrain_params)
+    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO,
+                        filename=f'./log/{t}_{pb.whole_string()}.log')
 
     '''Create oracle data loader for pos examples, generator & discriminator for adversarial training, and rollout for MC search'''
 

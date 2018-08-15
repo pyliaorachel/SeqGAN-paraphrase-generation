@@ -46,6 +46,9 @@ class PathBuilder:
 
         self.update_model_path_prefix()
 
+    def whole_string(self):
+        return '_'.join(self.model_pretrain_path_prefix.split('/'))
+
     def update_model_path_prefix(self):
         model_params = [ulinejoin([model] + [dashjoin([pk, pv]) for pk, pv in params.items()]) for model, params in self.model_params.items()]
         training_params = [ulinejoin([model] + [dashjoin([pk, pv]) for pk, pv in params.items()]) for model, params in self.training_params.items()]
