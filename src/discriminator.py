@@ -35,6 +35,9 @@ class Discriminator(nn.Module):
         self.embeddings = nn.Embedding(vocab_size, embedding_dim)
         self.hidden2out = nn.Linear(hidden_dim * 2, 1)
 
+        if gpu:
+            self.cuda()
+
     def init_hidden(self, batch_size):
         h = Variable(torch.zeros(2 * 2 * 1, batch_size, self.hidden_dim))
         return h.cuda() if self.gpu else h
