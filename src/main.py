@@ -61,12 +61,12 @@ def train_generator_MLE(gen, gen_opt, oracle, epochs):
             i += 1
 
         total_loss /= i # loss in each batch is size_averaged, so divide by num of batches is loss per sample
-        logging.info(f'[G_MLE] Average_train_NLL = {total_loss:.4f}')
+        logging.info(f'[G_MLE] epoch = {epoch + 1}, average_train_NLL = {total_loss:.4f}')
 
-def train_generator_PG(gen, gen_opt, dis, oracle, rollout, num_batches):
+def train_generator_PG(gen, gen_opt, dis, oracle, rollout, g_steps, adv_iter):
     """
     The generator is trained using policy gradients, using the reward from the discriminator.
-    Training is done for num_batches batches.
+    Training is done for g_steps batches.
     """
     gen.train()
     oracle.reset()
@@ -74,7 +74,7 @@ def train_generator_PG(gen, gen_opt, dis, oracle, rollout, num_batches):
     total_loss = 0
     i = 0
     end_of_dataset = False
-    for batch in range(num_batches):
+    for g_step in range(g_steps):
         if end_of_dataset:
             break
 
@@ -107,10 +107,10 @@ def train_generator_PG(gen, gen_opt, dis, oracle, rollout, num_batches):
 
         i += 1
 
-    total_loss = total_loss / num_batches 
-    logging.info(f'[G_PG] Average_train_NLL = {total_loss:.4f}')
+    total_loss = total_loss / g_steps
+    logging.info(f'[G_PG] iter = {adv_iter}, average_train_NLL = {total_loss:.4f}')
 
-def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs):
+def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter):
     """
     Training the discriminator on real samples (positive) and generated samples from generator (negative).
     Samples are drawn d_steps times, and the discriminator is trained for epochs epochs.
@@ -153,12 +153,15 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs):
 
                 i += 1
 
-            total_loss /= i # loss in each batch is size_averaged, so divide by num of batches is loss per sample
-            total_acc /= (i * BATCH_SIZE) # acc is not averaged, so average here
+            if i != 0:
+                total_loss /= i # loss in each batch is size_averaged, so divide by num of batches is loss per sample
+                total_acc /= (i * BATCH_SIZE) # acc is not averaged, so average here
 
-            _, val_acc = dis.batchBCELoss(val_inp, val_inp_lens, val_cond, val_cond_lens, val_target)
-            val_acc /= (valid_set_size * 2)
-            logging.info(f'[D] Average_loss = {total_loss:.4f}, train_acc = {total_acc:.4f}, val_acc = {val_acc:.4f}')
+                _, val_acc = dis.batchBCELoss(val_inp, val_inp_lens, val_cond, val_cond_lens, val_target)
+                val_acc /= (valid_set_size * 2)
+                logging.info(f'[D] iter = {adv_iter}, step = {d_step}, epoch = {epoch+1}, average_loss = {total_loss:.4f}, train_acc = {total_acc:.4f}, val_acc = {val_acc:.4f}')
+
+            end_of_dataset = False
 
     # Release validation set
     oracle.release()
@@ -210,7 +213,7 @@ if __name__ == '__main__':
         '''Pretrain discriminator'''
 
         print('\nStarting Discriminator Training...')
-        train_discriminator(dis, dis_optimizer, gen, oracle, D_PRETRAIN_STEPS, D_PRETRAIN_EPOCHS)
+        train_discriminator(dis, dis_optimizer, gen, oracle, D_PRETRAIN_STEPS, D_PRETRAIN_EPOCHS, -1)
 
         torch.save(dis.state_dict(), pb.model_pretrain_path('dis'))
         # dis.load_state_dict(torch.load(pb.model_pretrain_path('dis')))
@@ -224,12 +227,12 @@ if __name__ == '__main__':
         '''Train generator'''
 
         print('\nAdversarial Training Generator : ', end='')
-        train_generator_PG(gen, gen_optimizer, dis, oracle, rollout, G_TRAIN_STEPS)
+        train_generator_PG(gen, gen_optimizer, dis, oracle, rollout, G_TRAIN_STEPS, i)
 
         '''Train discriminator'''
 
         print('\nAdversarial Training Discriminator : ')
-        train_discriminator(dis, dis_optimizer, gen, oracle, D_TRAIN_STEPS, D_TRAIN_EPOCHS)
+        train_discriminator(dis, dis_optimizer, gen, oracle, D_TRAIN_STEPS, D_TRAIN_EPOCHS, i)
 
         if i % SAVE_MODEL_ITER == 0:
             if pb.pretrain:
