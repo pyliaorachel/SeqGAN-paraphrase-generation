@@ -26,9 +26,11 @@ class PathBuilder:
         self.model_file_suffix = model_file_suffix
         self.model_path_prefix = None
         self.model_pretrain_path_prefix = None
+        self.has_pretrained_models = False
+        self.has_trained_models = False
 
         self.update_model_path_prefix()
-        self.pretrain = self.mkdir() # check if model already exists
+        self.mkdir()
 
     def model_path(self, model_name):
         return os.path.join(self.model_path_prefix, dotjoin([model_name, self.model_file_suffix]))
@@ -71,19 +73,29 @@ class PathBuilder:
     def mkdir(self):
         # If a model with the same params already exists, the paths may only differ in the `iter` param for adversarial training
         # Make a wildcard path for this so that the existence of a pretrained model can be detected
-        start = self.model_pretrain_path_prefix.find('iter-')
-        end = self.model_pretrain_path_prefix.find('_', start)
-        wildcard_path = self.model_pretrain_path_prefix
-        wildcard_path = wildcard_path.replace(wildcard_path[start:end], 'iter-*')
+        start = self.model_path_prefix.find('iter-')
+        end = self.model_path_prefix.find('_', start)
 
+        wildcard_pretrain_path = self.model_pretrain_path_prefix
+        wildcard_pretrain_path = wildcard_pretrain_path.replace(wildcard_pretrain_path[start:end], 'iter-*')
+        wildcard_pretrain_path = os.path.join(wildcard_pretrain_path, f'*.{self.model_file_suffix}')
+        
+        wildcard_path = self.model_path_prefix
+        wildcard_path = wildcard_path.replace(wildcard_path[start:end], 'iter-*')
+        wildcard_path = os.path.join(wildcard_path, f'*.{self.model_file_suffix}')
+
+        pretrain_paths = glob.glob(wildcard_pretrain_path)
         paths = glob.glob(wildcard_path)
-        if len(paths) == 0:
+        if len(pretrain_paths) == 0:
             os.makedirs(self.model_pretrain_path_prefix)
-            return False
+            self.has_pretrained_models = False
+            self.has_trained_models = False 
         else:
-            self.model_params, self.training_params, self.pretrain_params = self.unparse_path(paths[0])
+            path = os.path.dirname(pretrain_paths[0]) 
+            self.model_params, self.training_params, self.pretrain_params = self.unparse_path(path)
             self.update_model_path_prefix()
-            return True
+            self.has_pretrained_models = True
+            self.has_trained_models = len(paths) != 0
 
     def unparse_path(self, path):
         _, model_params_str, training_params_str, _, pretrain_params_str = os.path.normpath(path).split(os.path.sep)

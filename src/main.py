@@ -189,14 +189,14 @@ if __name__ == '__main__':
     rollout = generator.Generator(G_ED, G_HD, vocab_size, end_token=end_token, pad_token=pad_token,
                                   max_seq_len=max_seq_len, gpu=CUDA)
 
-    if pb.pretrain:
+    if pb.has_trained_models:
         gen.load_state_dict(torch.load(pb.model_path('gen')))
         dis.load_state_dict(torch.load(pb.model_path('dis')))
 
     gen_optimizer = optim.Adam(gen.parameters(), lr=1e-2)
     dis_optimizer = optim.Adagrad(dis.parameters())
 
-    if not pb.pretrain: # only pretrain G and D if fresh new training
+    if not pb.has_pretrained_models:
         '''Pretrain generator'''
 
         print('Starting Generator MLE Training...')
@@ -212,6 +212,9 @@ if __name__ == '__main__':
 
         torch.save(dis.state_dict(), pb.model_pretrain_path('dis'))
         # dis.load_state_dict(torch.load(pb.model_pretrain_path('dis')))
+    else:
+        gen.load_state_dict(torch.load(pb.model_pretrain_path('gen')))
+        dis.load_state_dict(torch.load(pb.model_pretrain_path('dis')))
 
     '''Adversarial training'''
 
@@ -230,7 +233,7 @@ if __name__ == '__main__':
         train_discriminator(dis, dis_optimizer, gen, oracle, D_TRAIN_STEPS, D_TRAIN_EPOCHS, i)
 
         if i % SAVE_MODEL_ITER == 0:
-            if pb.pretrain:
+            if pb.has_trained_models:
                 params = { 'gan': { 'iter': SAVE_MODEL_ITER } }
                 pb.increment_training_params(params)
 
