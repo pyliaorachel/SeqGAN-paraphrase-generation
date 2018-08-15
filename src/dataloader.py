@@ -9,7 +9,7 @@ Sample usage:
 import csv
 
 import torch
-import torch.autograd as autograd
+from torch.autograd import Variable
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
@@ -109,8 +109,8 @@ class DataLoader:
             self.freeze(cond_ids[0], cond_ids[-1])
 
         # Wrap in variable
-        pos_samples = autograd.Variable(torch.LongTensor(pos_samples))
-        pos_lens = autograd.Variable(torch.LongTensor(pos_lens))
+        pos_samples = Variable(torch.LongTensor(pos_samples))
+        pos_lens = Variable(torch.LongTensor(pos_lens))
 
         if self.gpu:
             pos_samples = pos_samples.cuda()
@@ -134,8 +134,8 @@ class DataLoader:
         cond_samples, cond_lens = self.cond_samples[cond_ids], self.cond_lens[cond_ids]
 
         # Wrap in variable
-        cond_samples = autograd.Variable(torch.LongTensor(cond_samples))
-        cond_lens = autograd.Variable(torch.LongTensor(cond_lens))
+        cond_samples = Variable(torch.LongTensor(cond_samples))
+        cond_lens = Variable(torch.LongTensor(cond_lens))
         
         if self.gpu:
             cond_samples = cond_samples.cuda()
