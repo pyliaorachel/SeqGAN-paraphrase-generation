@@ -46,7 +46,7 @@ class Discriminator(nn.Module):
         Inputs:
             - inp, cond: batch_size x seq_len
             - inp_lens, cond_lens: batch_size
-            - hidden: 4 x batch_size x hidden_dim
+            - hidden, hidden_cond: 4 x batch_size x hidden_dim
         """
         # Inp
         inp, inp_lens, sort_idx = helpers.sort_sample_by_len(inp, inp_lens)      # sort

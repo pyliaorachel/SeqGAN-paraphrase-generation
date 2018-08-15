@@ -63,12 +63,17 @@ def prepare_discriminator_data(oracle, gen, batch_size, is_val=False, gpu=False)
     inp, inp_lens, cond, cond_lens, target = Variable(inp), Variable(inp_lens), Variable(cond), Variable(cond_lens), Variable(target)
 
     if gpu:
-        inp, inp_lens, cond, cond_lens, target = inp.cuda(), inp_lens.cuda(), cond.cuda(), cond_lens.cuda(), target.cuda()
+        inp = inp.cuda()
+        inp_lens = inp_lens.cuda()
+        cond = cond.cuda()
+        cond_lens = cond_lens.cuda()
+        target = target.cuda()
 
     return inp, inp_lens, cond, cond_lens, target, end_of_dataset
 
 def batchwise_sample(gen, num_samples, batch_size):
     """
+    NOT USED.
     Sample num_samples samples batch_size samples at a time from gen.
     Does not require gpu since gen.sample() takes care of that.
     """
@@ -80,6 +85,9 @@ def batchwise_sample(gen, num_samples, batch_size):
     return torch.cat(samples, 0)[:num_samples]
 
 def batchwise_oracle_nll(gen, oracle, num_samples, batch_size, max_seq_len, start_letter=0, gpu=False):
+    """
+    NOT USED.
+    """
     s = batchwise_sample(gen, num_samples, batch_size)
     oracle_nll = 0
     for i in range(0, num_samples, batch_size):

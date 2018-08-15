@@ -168,11 +168,11 @@ class Generator(nn.Module):
         rollout_cond = cond.view(1, batch_size, 1, -1) \
                            .repeat((seq_len - 1), 1, 1, rollout_num) \
                            .view((seq_len - 1), batch_size, rollout_num, -1)
-        rollout_lens = cond_lens.view(1, batch_size, -1) \
+        rollout_cond_lens = cond_lens.view(1, batch_size, -1) \
                                 .repeat((seq_len - 1), 1, rollout_num) \
                                 .view((seq_len - 1), batch_size, rollout_num)
 
-        return rollout_targets, rollout_target_lens, rollout_cond, rollout_lens
+        return rollout_targets, rollout_target_lens, rollout_cond, rollout_cond_lens
 
     def encode(self, inp):
         """
