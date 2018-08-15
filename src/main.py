@@ -196,11 +196,6 @@ if __name__ == '__main__':
     gen_optimizer = optim.Adam(gen.parameters(), lr=1e-2)
     dis_optimizer = optim.Adagrad(dis.parameters())
 
-    if CUDA:
-        gen = gen.cuda()
-        dis = dis.cuda()
-        rollout = rollout.cuda()
-
     if not pb.pretrain: # only pretrain G and D if fresh new training
         '''Pretrain generator'''
 

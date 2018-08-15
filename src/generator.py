@@ -26,6 +26,9 @@ class Generator(nn.Module):
         self.gru = nn.GRU(embedding_dim, hidden_dim, batch_first=True)
         self.gru2out = nn.Linear(hidden_dim, vocab_size)
 
+        if gpu:
+            self.cuda()
+
     def init_hidden(self, batch_size=1):
         h = Variable(torch.zeros(1, batch_size, self.hidden_dim)) # 1 for num_layers * num_directions
         return h.cuda() if self.gpu else h
@@ -79,6 +82,7 @@ class Generator(nn.Module):
         """
         batch_size, sub_seq_len = inp.size()
         samples = torch.ones(n * batch_size, self.max_seq_len).long() * self.pad_token
+
         if self.gpu:
             samples = samples.cuda()
             inp = inp.cuda()
@@ -158,6 +162,10 @@ class Generator(nn.Module):
         rollout_targets = torch.ones(seq_len - 1, batch_size, rollout_num, self.max_seq_len).long() * self.pad_token
         rollout_target_lens = torch.zeros(seq_len - 1, batch_size, rollout_num).long()
 
+        if self.gpu:
+            rollout_targets = rollout_targets.cuda()
+            rollout_target_lens = rollout_target_lens.cuda()
+
         for t in range(seq_len-1):
             out, h = self.forward(inp[:, t], h)
             samples, lens = self.continue_sample_N(inp[:, :t+1], rollout_num, h)
@@ -171,6 +179,10 @@ class Generator(nn.Module):
         rollout_cond_lens = cond_lens.view(1, batch_size, -1) \
                                 .repeat((seq_len - 1), 1, rollout_num) \
                                 .view((seq_len - 1), batch_size, rollout_num)
+
+        if self.gpu:
+            rollout_cond = rollout_cond.cuda()
+            rollout_cond_lens = rollout_cond_lens.cuda()
 
         return rollout_targets, rollout_target_lens, rollout_cond, rollout_cond_lens
 

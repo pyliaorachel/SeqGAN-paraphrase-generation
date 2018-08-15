@@ -21,7 +21,10 @@ def prepare_generator_batch(oracle, gen, batch_size, gpu=False):
     target, target_lens, cond, cond_lens = Variable(target), Variable(target_lens), Variable(cond), Variable(cond_lens)
 
     if gpu:
-        target, target_lens, cond, cond_lens = target.cuda(), target_lens.cuda(), cond.cuda(), cond_lens.cuda()
+        target = target.cuda()
+        target_lens = target_lens.cuda()
+        cond = cond.cuda()
+        cond_lens = cond_lens.cuda()
 
     return target, target_lens, cond, cond_lens, end_of_dataset 
 

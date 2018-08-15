@@ -1,10 +1,13 @@
+import torch
+
+
 DEBUG = True 
 LIGHT_VER = True # Light version of dataset
 
 END_TOKEN = '<E>'
 PAD_TOKEN = '<P>'
 
-CUDA = False
+CUDA = torch.cuda.is_available()
 MAX_SEQ_LEN_PADDING = 10
 BATCH_SIZE = 32
 ROLLOUT_NUM = 3
