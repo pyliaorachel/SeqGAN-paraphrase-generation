@@ -278,3 +278,11 @@ class Generator(nn.Module):
             loss += -torch.sum(log_probs * rewards[i+1])
 
         return loss / batch_size
+
+    def turn_on_grads(self):
+        for param in self.parameters():
+            param.requires_grad = True
+
+    def turn_off_grads(self):
+        for param in self.parameters():
+            param.requires_grad = False

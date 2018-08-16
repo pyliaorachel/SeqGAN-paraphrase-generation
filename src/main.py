@@ -69,6 +69,8 @@ def train_generator_PG(gen, gen_opt, dis, oracle, rollout, g_steps, adv_iter):
     Training is done for g_steps batches.
     """
     gen.train()
+    gen.turn_on_grads()
+    dis.turn_off_grads() # no need to backpropagate to dis
     oracle.reset()
 
     total_loss = 0
@@ -116,6 +118,8 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter):
     Samples are drawn d_steps times, and the discriminator is trained for epochs epochs.
     """
     dis.train()
+    dis.turn_on_grads()
+    gen.turn_off_grads() # no need to backpropagate to gen
     oracle.reset()
 
     # Generate a small validation set before training (using oracle and generator)
@@ -188,6 +192,7 @@ if __name__ == '__main__':
                                       max_seq_len=max_seq_len, gpu=CUDA)
     rollout = generator.Generator(G_ED, G_HD, vocab_size, end_token=end_token, pad_token=pad_token,
                                   max_seq_len=max_seq_len, gpu=CUDA)
+    rollout.turn_off_grads() # rollout does not need to be backpropagated
 
     if pb.has_trained_models:
         gen.load_state_dict(torch.load(pb.model_path('gen')))
