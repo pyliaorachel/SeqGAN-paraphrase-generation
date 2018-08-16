@@ -117,3 +117,11 @@ class Discriminator(nn.Module):
         acc = torch.sum((out > 0.5) == (target > 0.5)).data.item()
         loss = F.binary_cross_entropy(out, target)
         return loss, acc
+
+    def turn_on_grads(self):
+        for param in self.parameters():
+            param.requires_grad = True
+
+    def turn_off_grads(self):
+        for param in self.parameters():
+            param.requires_grad = False
