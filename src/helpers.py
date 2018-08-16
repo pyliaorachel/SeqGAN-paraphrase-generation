@@ -1,5 +1,4 @@
 import torch
-from torch.autograd import Variable
 from math import ceil
 import numpy as np
 
@@ -17,9 +16,7 @@ def prepare_generator_batch(oracle, gen, batch_size, gpu=False):
     cond, cond_lens = oracle.fetch_cond_samples(cond_ids)
     target, target_lens = gen.sample(cond)
 
-    # Wrap
-    target, target_lens, cond, cond_lens = Variable(target), Variable(target_lens), Variable(cond), Variable(cond_lens)
-
+    # Put to GPU
     if gpu:
         target = target.cuda()
         target_lens = target_lens.cuda()
@@ -62,9 +59,7 @@ def prepare_discriminator_data(oracle, gen, batch_size, is_val=False, gpu=False)
     perm = torch.randperm(batch_size * 2)
     inp, inp_lens, cond, cond_lens, target = inp[perm], inp_lens[perm], cond[perm], cond_lens[perm], target[perm]
 
-    # Wrap
-    inp, inp_lens, cond, cond_lens, target = Variable(inp), Variable(inp_lens), Variable(cond), Variable(cond_lens), Variable(target)
-
+    # Put to GPU
     if gpu:
         inp = inp.cuda()
         inp_lens = inp_lens.cuda()
