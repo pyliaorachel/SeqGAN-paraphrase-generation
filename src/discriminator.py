@@ -2,7 +2,6 @@
 BiGRU text classifier.
 """
 import torch
-from torch.autograd import Variable
 import torch.nn as nn
 import torch.nn.functional as F
 import pdb
@@ -39,7 +38,7 @@ class Discriminator(nn.Module):
             self.cuda()
 
     def init_hidden(self, batch_size):
-        h = Variable(torch.zeros(2 * 2 * 1, batch_size, self.hidden_dim))
+        h = torch.zeros(2 * 2 * 1, batch_size, self.hidden_dim)
         return h.cuda() if self.gpu else h
 
     def forward(self, inp, inp_lens, cond, cond_lens, hidden, hidden_cond):

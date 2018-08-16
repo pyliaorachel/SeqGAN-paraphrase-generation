@@ -1,5 +1,4 @@
 import torch
-from torch.autograd import Variable
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
@@ -30,7 +29,7 @@ class Generator(nn.Module):
             self.cuda()
 
     def init_hidden(self, batch_size=1):
-        h = Variable(torch.zeros(1, batch_size, self.hidden_dim)) # 1 for num_layers * num_directions
+        h = torch.zeros(1, batch_size, self.hidden_dim) # 1 for num_layers * num_directions
         return h.cuda() if self.gpu else h
 
     def forward(self, inp, hidden):
