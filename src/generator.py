@@ -55,7 +55,7 @@ class Generator(nn.Module):
         Inputs:
             - cond: num_samples x max_seq_len
         Outputs: samples, lens
-            - samples: num_samples x max_seq_len_s
+            - samples: num_samples x max_seq_len
             - lens: num_samples
         """
         num_samples = cond.shape[0]
