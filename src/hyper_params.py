@@ -1,14 +1,6 @@
-import torch
+from .static_params import *
 
 
-DEBUG = True 
-LIGHT_VER = True # Light version of dataset
-NO_SAVE = True
-
-END_TOKEN = '<E>'
-PAD_TOKEN = '<P>'
-
-CUDA = torch.cuda.is_available()
 MAX_SEQ_LEN_PADDING = 10
 BATCH_SIZE = 32
 ROLLOUT_NUM = 3
@@ -25,11 +17,6 @@ G_ED = 32 # embedding dim
 G_HD = 32 # hidden dim
 D_ED = 64
 D_HD = 64
-
-VALID_SET_SIZE_RATIO = 0.2
-SAVE_MODEL_ITER = 1
-
-dataset_path = './dataset/quora_duplicate_questions.tsv'
 
 model_params = { 'gan': { 'rn': ROLLOUT_NUM, 'tfr': TEACHER_FORCING_RATIO, 'bs': BATCH_SIZE, 'pad': MAX_SEQ_LEN_PADDING },
                  'G': { 'ed': G_ED, 'hd': G_HD },

@@ -17,7 +17,8 @@ from . import generator
 from . import discriminator
 from . import dataloader
 from . import pathbuilder
-from .params import *
+from .hyper_params import *
+from .static_params import *
 from . import helpers
 
 
