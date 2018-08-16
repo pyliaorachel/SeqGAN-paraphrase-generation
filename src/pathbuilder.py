@@ -12,7 +12,7 @@ def dotjoin(values):
     return '.'.join([str(v) for v in values])
 
 class PathBuilder:
-    def __init__(self, model_params={}, training_params={}, pretrain_params={}, model_file_suffix='trc', path=None):
+    def __init__(self, model_params={}, training_params={}, pretrain_params={}, model_file_suffix='trc', path=None, debug=False, no_save=False):
         """
         Inputs:
             - model_params, training_params: {'model_name': {'param_name': param_value}}
@@ -28,9 +28,12 @@ class PathBuilder:
         self.model_pretrain_path_prefix = None
         self.has_pretrained_models = False
         self.has_trained_models = False
+        self.debug = debug
+        self.no_save = no_save
 
         self.update_model_path_prefix()
-        self.mkdir()
+        if not debug and not no_save:
+            self.mkdir()
 
     def model_path(self, model_name):
         return os.path.join(self.model_path_prefix, dotjoin([model_name, self.model_file_suffix]))
