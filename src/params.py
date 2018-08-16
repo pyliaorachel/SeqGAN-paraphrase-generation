@@ -3,6 +3,7 @@ import torch
 
 DEBUG = True 
 LIGHT_VER = True # Light version of dataset
+NO_SAVE = True
 
 END_TOKEN = '<E>'
 PAD_TOKEN = '<P>'

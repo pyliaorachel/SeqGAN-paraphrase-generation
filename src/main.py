@@ -171,7 +171,7 @@ if __name__ == '__main__':
     t = time.strftime('%Y-%m-%d_%H:%M:%S', time.localtime())
 
     args = parse_args()
-    pb = pathbuilder.PathBuilder(model_params, training_params, pretrain_params)
+    pb = pathbuilder.PathBuilder(model_params, training_params, pretrain_params, debug=DEBUG, no_save=NO_SAVE)
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO,
                         filename=f'./log/{t}_{pb.whole_string()}.log')
 
@@ -202,7 +202,8 @@ if __name__ == '__main__':
         print('Starting Generator MLE Training...')
         train_generator_MLE(gen, gen_optimizer, oracle, G_PRETRAIN_EPOCHS)
 
-        torch.save(gen.state_dict(), pb.model_pretrain_path('gen'))
+        if not DEBUG and not NO_SAVE:
+           torch.save(gen.state_dict(), pb.model_pretrain_path('gen'))
         # gen.load_state_dict(torch.load(pb.model_pretrain_path('gen')))
 
         '''Pretrain discriminator'''
@@ -210,7 +211,8 @@ if __name__ == '__main__':
         print('\nStarting Discriminator Training...')
         train_discriminator(dis, dis_optimizer, gen, oracle, D_PRETRAIN_STEPS, D_PRETRAIN_EPOCHS, -1)
 
-        torch.save(dis.state_dict(), pb.model_pretrain_path('dis'))
+        if not DEBUG and not NO_SAVE:
+           torch.save(dis.state_dict(), pb.model_pretrain_path('dis'))
         # dis.load_state_dict(torch.load(pb.model_pretrain_path('dis')))
     else:
         gen.load_state_dict(torch.load(pb.model_pretrain_path('gen')))
@@ -232,7 +234,7 @@ if __name__ == '__main__':
         print('\nAdversarial Training Discriminator : ')
         train_discriminator(dis, dis_optimizer, gen, oracle, D_TRAIN_STEPS, D_TRAIN_EPOCHS, i)
 
-        if i % SAVE_MODEL_ITER == 0:
+        if not DEBUG and not NO_SAVE and i % SAVE_MODEL_ITER == 0:
             if pb.has_trained_models:
                 params = { 'gan': { 'iter': SAVE_MODEL_ITER } }
                 pb.increment_training_params(params)
