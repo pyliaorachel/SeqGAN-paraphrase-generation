@@ -18,7 +18,8 @@ class PathBuilder:
             - model_params, training_params: {'model_name': {'param_name': param_value}}
         """
         if path is not None:
-            model_params, training_params, pretrain_params = self.unparse_path(path)
+            dir_path = os.path.dirname(path)
+            model_params, training_params, pretrain_params = self.unparse_path(dir_path)
 
         self.model_params = model_params
         self.training_params = training_params
