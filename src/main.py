@@ -142,15 +142,26 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter, sa
 
     # Train discriminator
     for d_step in range(d_steps):
+        # Sample training set for this step
+        all_inp, all_inp_lens, all_cond, all_cond_lens, all_target, end_of_dataset \
+                = helpers.prepare_discriminator_data(oracle, gen, train_set_size, gpu=False)
         for epoch in range(epochs):
             print(f'd-step {d_step + 1} epoch {epoch + 1} : ', end='')
 
             total_loss = 0
             total_acc = 0
-            i = 0
-            while not end_of_dataset: 
-                # Sample
-                inp, inp_lens, cond, cond_lens, target, end_of_dataset = helpers.prepare_discriminator_data(oracle, gen, BATCH_SIZE, gpu=CUDA)
+            for i in range(0, train_set_size, BATCH_SIZE):
+                # Sample batch & move to GPU
+                if i + BATCH_SIZE <= train_set_size:
+                    inp, inp_lens, cond, cond_lens, target \
+                            = all_inp[i:i+BATCH_SIZE], all_inp_lens[i:i+BATCH_SIZE], \
+                              all_cond[i:i+BATCH_SIZE], all_cond_lens[i:i+BATCH_SIZE], all_target[i:i+BATCH_SIZE]
+                else:
+                    inp, inp_lens, cond, cond_lens, target \
+                            = all_inp[i:], all_inp_lens[i:], all_cond[i:], all_cond_lens[i:], all_target[i:]
+
+                if CUDA:
+                    inp, inp_lens, cond, cond_lens, target = inp.cuda(), inp_lens.cuda(), cond.cuda(), cond_lens.cuda(), target.cuda()
 
                 # Train
                 dis_opt.zero_grad()
@@ -163,11 +174,9 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter, sa
                 total_acc += acc
 
                 # Log
-                if i % ceil(ceil(oracle.total_samples / float(BATCH_SIZE / 2)) / 10.) == 0: # roughly every 10% of an epoch
+                if (i / BATCH_SIZE) % ceil(ceil(oracle.total_samples / float(BATCH_SIZE / 2)) / 10.) == 0: # roughly every 10% of an epoch
                     print('.', end='')
                     sys.stdout.flush()
-
-                i += 1
 
             if i != 0:
                 total_loss /= train_set_size 
