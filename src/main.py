@@ -175,7 +175,8 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter, sa
 
                 # Evaluate on val set
                 dis.eval()
-                val_inp, val_inp_lens, val_cond, val_cond_lens, val_target = val_inp.cuda(), val_inp_lens.cuda(), val_cond.cuda(), val_cond_lens.cuda(), val_target.cuda()
+                if CUDA:
+                    val_inp, val_inp_lens, val_cond, val_cond_lens, val_target = val_inp.cuda(), val_inp_lens.cuda(), val_cond.cuda(), val_cond_lens.cuda(), val_target.cuda()
 
                 with torch.no_grad():
                     val_acc = 0
