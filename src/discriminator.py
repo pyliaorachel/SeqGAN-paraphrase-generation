@@ -53,32 +53,28 @@ class Discriminator(nn.Module):
         # Inp
         inp, inp_lens, sort_idx = helpers.sort_sample_by_len(inp, inp_lens)      # sort
 
-        emb = self.embeddings(inp)                                               # batch_size x seq_len x embedding_dim
+        inp = self.embeddings(inp)                                               # batch_size x seq_len x embedding_dim
 
         inp = nn.utils.rnn.pack_padded_sequence(inp, inp_lens, batch_first=True)
-        _, hidden = self.gru(emb, hidden)                                        # 4 x batch_size x hidden_dim
-        inp, _ = nn.utils.rnn.pad_packed_sequence(inp, batch_first=True)
+        _, hidden = self.gru(inp, hidden)                                        # 4 x batch_size x hidden_dim
 
         out = self.gru2hidden(hidden.view(-1, 4 * self.hidden_dim))              # batch_size x (4 * hidden_dim)
         out = torch.tanh(out)
         out = self.dropout_linear(out)
 
-        inp, inp_lens = inp[sort_idx], inp_lens[sort_idx]                        # unsort
-
         # Cond
         cond, cond_lens, sort_idx_cond = helpers.sort_sample_by_len(cond, cond_lens)
 
-        emb_cond = self.embeddings(cond)
+        cond = self.embeddings(cond)
 
         cond = nn.utils.rnn.pack_padded_sequence(cond, cond_lens, batch_first=True)
-        _, hidden_cond = self.gru_cond(emb_cond, hidden_cond)
-        cond, _ = nn.utils.rnn.pad_packed_sequence(cond, batch_first=True)
+        _, hidden_cond = self.gru_cond(cond, hidden_cond)
 
         out_cond = self.gru2hidden_cond(hidden_cond.view(-1, 4 * self.hidden_dim))
         out_cond = torch.tanh(out_cond)
         out_cond = self.dropout_linear_cond(out_cond)
 
-        cond, cond_lens = cond[sort_idx_cond], cond_lens[sort_idx_cond]
+        #cond, cond_lens = cond[sort_idx_cond], cond_lens[sort_idx_cond]
 
         # Combine
         out = torch.cat([out, out_cond], dim=1) # batch_size x (hidden_dim * 2)
