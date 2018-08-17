@@ -27,7 +27,7 @@ def parse_args():
     # TODO: add arguments
     return parser.parse_args()
 
-def train_generator_MLE(gen, gen_opt, oracle, epochs):
+def train_generator_MLE(gen, gen_opt, oracle, epochs, save_path):
     """
     Max Likelihood Pretraining for the generator
     """
@@ -64,7 +64,10 @@ def train_generator_MLE(gen, gen_opt, oracle, epochs):
         total_loss /= i # loss in each batch is size_averaged, so divide by num of batches is loss per sample
         logging.info(f'[G_MLE] epoch = {epoch + 1}, average_train_NLL = {total_loss:.4f}')
 
-def train_generator_PG(gen, gen_opt, dis, oracle, rollout, g_steps, adv_iter):
+    if not NO_SAVE:
+       torch.save(gen.state_dict(), save_path)
+
+def train_generator_PG(gen, gen_opt, dis, oracle, rollout, g_steps, adv_iter, save_path):
     """
     The generator is trained using policy gradients, using the reward from the discriminator.
     Training is done for g_steps batches.
@@ -113,7 +116,10 @@ def train_generator_PG(gen, gen_opt, dis, oracle, rollout, g_steps, adv_iter):
     total_loss = total_loss / g_steps
     logging.info(f'[G_PG] iter = {adv_iter}, average_train_NLL = {total_loss:.4f}')
 
-def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter):
+    if not NO_SAVE:
+       torch.save(gen.state_dict(), save_path)
+
+def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter, save_path):
     """
     Training the discriminator on real samples (positive) and generated samples from generator (negative).
     Samples are drawn d_steps times, and the discriminator is trained for epochs epochs.
@@ -178,6 +184,9 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter):
 
             end_of_dataset = False
 
+        if not NO_SAVE:
+           torch.save(dis.state_dict(), save_path)
+
     # Release validation set
     oracle.release()
 
@@ -216,19 +225,13 @@ if __name__ == '__main__':
         '''Pretrain generator'''
 
         print('Starting Generator MLE Training...')
-        train_generator_MLE(gen, gen_optimizer, oracle, G_PRETRAIN_EPOCHS)
-
-        if not NO_SAVE:
-           torch.save(gen.state_dict(), pb.model_pretrain_path('gen'))
+        train_generator_MLE(gen, gen_optimizer, oracle, G_PRETRAIN_EPOCHS, pb.model_pretrain_path('gen'))
         # gen.load_state_dict(torch.load(pb.model_pretrain_path('gen')))
 
         '''Pretrain discriminator'''
 
         print('\nStarting Discriminator Training...')
-        train_discriminator(dis, dis_optimizer, gen, oracle, D_PRETRAIN_STEPS, D_PRETRAIN_EPOCHS, -1)
-
-        if not NO_SAVE:
-           torch.save(dis.state_dict(), pb.model_pretrain_path('dis'))
+        train_discriminator(dis, dis_optimizer, gen, oracle, D_PRETRAIN_STEPS, D_PRETRAIN_EPOCHS, -1, pb.model_pretrain_path('dis'))
         # dis.load_state_dict(torch.load(pb.model_pretrain_path('dis')))
     else:
         gen.load_state_dict(torch.load(pb.model_pretrain_path('gen')))
@@ -243,17 +246,13 @@ if __name__ == '__main__':
         '''Train generator'''
 
         print('\nAdversarial Training Generator : ', end='')
-        train_generator_PG(gen, gen_optimizer, dis, oracle, rollout, G_TRAIN_STEPS, i)
+        train_generator_PG(gen, gen_optimizer, dis, oracle, rollout, G_TRAIN_STEPS, i, pb.model_path('gen'))
 
         '''Train discriminator'''
 
         print('\nAdversarial Training Discriminator : ')
-        train_discriminator(dis, dis_optimizer, gen, oracle, D_TRAIN_STEPS, D_TRAIN_EPOCHS, i)
+        train_discriminator(dis, dis_optimizer, gen, oracle, D_TRAIN_STEPS, D_TRAIN_EPOCHS, i, pb.model_path('dis'))
 
-        if not NO_SAVE and i % SAVE_MODEL_ITER == 0:
-            if pb.has_trained_models:
-                params = { 'gan': { 'iter': SAVE_MODEL_ITER } }
-                pb.increment_training_params(params)
-
-            torch.save(gen.state_dict(), pb.model_path('gen'))
-            torch.save(dis.state_dict(), pb.model_path('dis'))
+        if not NO_SAVE and pb.has_trained_models:
+            params = { 'gan': { 'iter': 1 } }
+            pb.increment_training_params(params)
