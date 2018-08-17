@@ -52,7 +52,7 @@ def train_generator_MLE(gen, gen_opt, oracle, epochs, save_path):
             gen_opt.step()
 
             # Accumulate loss
-            total_loss += loss.item()
+            total_loss += loss.item() * len(pos_samples)
 
             # Log
             if i % ceil(ceil(oracle.total_samples / float(BATCH_SIZE)) / 10.) == 0: # roughly every 10% of an epoch
@@ -61,7 +61,7 @@ def train_generator_MLE(gen, gen_opt, oracle, epochs, save_path):
 
             i += 1
 
-        total_loss /= i # loss in each batch is size_averaged, so divide by num of batches is loss per sample
+        total_loss /= oracle.total_samples # loss in each batch is size_averaged, so divide by num of batches is loss per sample
         logging.info(f'[G_MLE] epoch = {epoch + 1}, average_train_NLL = {total_loss:.4f}')
 
     if not NO_SAVE:
@@ -80,6 +80,7 @@ def train_generator_PG(gen, gen_opt, dis, oracle, rollout, g_steps, adv_iter, sa
     total_loss = 0
     i = 0
     end_of_dataset = False
+    total_samples = 0
     for g_step in range(g_steps):
         if end_of_dataset:
             break
@@ -109,11 +110,12 @@ def train_generator_PG(gen, gen_opt, dis, oracle, rollout, g_steps, adv_iter, sa
         gen_opt.step()
 
         # Accumulate loss
-        total_loss += loss.item()
+        total_loss += loss.item() * len(target)
 
+        total_samples += len(target)
         i += 1
 
-    total_loss = total_loss / g_steps
+    total_loss = total_loss / total_samples
     logging.info(f'[G_PG] iter = {adv_iter}, average_train_NLL = {total_loss:.4f}')
 
     if not NO_SAVE:
@@ -157,7 +159,7 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter, sa
                 dis_opt.step()
 
                 # Accumulate loss
-                total_loss += loss.item() * inp.shape[0] # Sum instead of average
+                total_loss += loss.item() * len(inp) # Sum instead of average
                 total_acc += acc
 
                 # Log
