@@ -288,8 +288,6 @@ class Generator(nn.Module):
             - inp: batch_size x seq_len
             - target: batch_size x seq_len
             - rewards: seq_len x batch_size (discriminator reward for each token in the sentence)
-
-            inp should be target with <s> (start letter) prepended
         """
         batch_size, seq_len = target.shape
         target = target.t()     # seq_len x batch_size
