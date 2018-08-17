@@ -131,10 +131,12 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter, sa
 
     # Generate a small validation set before training (using oracle and generator)
     dataset_size = oracle.total_samples
-    valid_set_size = int(dataset_size * VALID_SET_SIZE_RATIO)
+    valid_set_size = int(dataset_size * VALID_SET_SIZE_RATIO) * 2
     valid_set_size -= valid_set_size % BATCH_SIZE # align with batch size
     val_inp, val_inp_lens, val_cond, val_cond_lens, val_target, end_of_dataset \
-            = helpers.prepare_discriminator_data(oracle, gen, valid_set_size, is_val=True, gpu=CUDA)
+            = helpers.prepare_discriminator_data(oracle, gen, valid_set_size, is_val=True, gpu=False)
+
+    train_set_size = int(oracle.total_samples - valid_set_size / 2) * 2
 
     # Train discriminator
     for d_step in range(d_steps):
@@ -145,8 +147,8 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter, sa
             total_acc = 0
             i = 0
             while not end_of_dataset: 
-                # Sample, BATCH_SIZE / 2 to make combined input equal to BATCH_SIZE
-                inp, inp_lens, cond, cond_lens, target, end_of_dataset = helpers.prepare_discriminator_data(oracle, gen, BATCH_SIZE / 2, gpu=CUDA)
+                # Sample
+                inp, inp_lens, cond, cond_lens, target, end_of_dataset = helpers.prepare_discriminator_data(oracle, gen, BATCH_SIZE, gpu=CUDA)
 
                 # Train
                 dis_opt.zero_grad()
@@ -155,8 +157,8 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter, sa
                 dis_opt.step()
 
                 # Accumulate loss
-                total_loss += loss.item()
-                total_acc += acc 
+                total_loss += loss.item() * inp.shape[0] # Sum instead of average
+                total_acc += acc
 
                 # Log
                 if i % ceil(ceil(oracle.total_samples / float(BATCH_SIZE / 2)) / 10.) == 0: # roughly every 10% of an epoch
@@ -166,11 +168,13 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter, sa
                 i += 1
 
             if i != 0:
-                total_loss /= i # loss in each batch is size_averaged, so divide by num of batches is loss per sample
-                total_acc /= (i * BATCH_SIZE) # acc is not averaged, so average here
+                total_loss /= train_set_size 
+                total_acc /= train_set_size
 
                 # Evaluate on val set
                 dis.eval()
+                val_inp, val_inp_lens, val_cond, val_cond_lens, val_target = val_inp.cuda(), val_inp_lens.cuda(), val_cond.cuda(), val_cond_lens.cuda(), val_target.cuda()
+
                 with torch.no_grad():
                     val_acc = 0
                     for i in range(0, valid_set_size, BATCH_SIZE):
@@ -178,6 +182,8 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter, sa
                                                   val_cond[i:i+BATCH_SIZE], val_cond_lens[i:i+BATCH_SIZE], val_target[i:i+BATCH_SIZE])
                         val_acc += acc
                     val_acc /= valid_set_size
+
+                val_inp, val_inp_lens, val_cond, val_cond_lens, val_target = val_inp.cpu(), val_inp_lens.cpu(), val_cond.cpu(), val_cond_lens.cpu(), val_target.cpu()
                 dis.train()
 
                 logging.info(f'[D] iter = {adv_iter}, step = {d_step}, epoch = {epoch+1}, average_loss = {total_loss:.4f}, train_acc = {total_acc:.4f}, val_acc = {val_acc:.4f}')

@@ -31,9 +31,9 @@ def prepare_discriminator_data(oracle, gen, batch_size, is_val=False, gpu=False)
     to prepare inp and target samples for discriminator.
 
     Returns: inp, inp_lens, cond, cond_lens, target, end_of_dataset
-        - inp, cond: (batch_size * 2) x seq_len
-        - inp_lens, cond_lens: (batch_size * 2)
-        - target: (batch_size * 2) (boolean 1/0)
+        - inp, cond: batch_size x seq_len
+        - inp_lens, cond_lens: batch_size
+        - target: batch_size (boolean 1/0)
     """
     batch_size = int(batch_size / 2) # half for pos, half for neg
 
