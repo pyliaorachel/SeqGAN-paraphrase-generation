@@ -35,6 +35,8 @@ def prepare_discriminator_data(oracle, gen, batch_size, is_val=False, gpu=False)
         - inp_lens, cond_lens: (batch_size * 2)
         - target: (batch_size * 2) (boolean 1/0)
     """
+    batch_size = int(batch_size / 2) # half for pos, half for neg
+
     # Prepare pos, neg, cond samples
     pos_samples, pos_lens, cond_ids, end_of_dataset = oracle.sample(batch_size, is_val=is_val)
     batch_size = len(cond_ids) # update actual sampled batch size
