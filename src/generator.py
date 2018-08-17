@@ -55,7 +55,7 @@ class Generator(nn.Module):
         Inputs:
             - cond: num_samples x max_seq_len
         Outputs: samples, lens
-            - samples: num_samples x max_seq_len_s
+            - samples: num_samples x max_seq_len
             - lens: num_samples
         """
         num_samples = cond.shape[0]
@@ -64,6 +64,36 @@ class Generator(nn.Module):
         out = self.sample_one(out).view(-1, 1)
         samples, lens = self.continue_sample_N(out, 1, h)
         return samples.view((num_samples, -1)), lens.view(-1) # samples: remove second dimension used for N; lens: flatten
+
+    def sample_until_end(self, cond, max_len):
+        """
+        Samples one sentence based on cond until end token is generated.
+
+        Inputs:
+            - cond: seq_len
+        Outputs: sample
+            - sample: seq_len
+        """
+        cond = cond.unsqueeze(0)
+
+        # Encode & generate first output
+        out, h = self.encode(cond)
+        out = self.sample_one(out).view(-1)
+
+        # Keep sampling until end token generated
+        sample = out
+        has_ended = out == self.end_token
+        l = 1
+        while not has_ended and l < max_len:
+            out, h = self.forward(out, h)
+            out = self.sample_one(out)
+
+            sample = torch.cat([sample, out])
+            has_ended = out == self.end_token
+
+            l += 1
+
+        return sample
 
     def continue_sample_N(self, inp, n, h=None):
         """

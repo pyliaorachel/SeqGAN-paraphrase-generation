@@ -143,7 +143,18 @@ class DataLoader:
         """
         Return index mappings for a sentence.
         """
-        return [self.word_to_int[w] for w in s]
+        ints = []
+        for w in s:
+            # Skip if word not found in dict
+            if w in self.word_to_int:
+                ints += [self.word_to_int[w]]
+        return ints
+
+    def ints_to_sent(self, ints):
+        """
+        Return sentence given list of ints.
+        """
+        return ' '.join([self.int_to_word[i] for i in ints])
 
     def fetch(self):
         """
