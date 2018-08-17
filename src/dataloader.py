@@ -87,7 +87,7 @@ class DataLoader:
         self.pos_samples, self.pos_lens = helpers.pad_samples(self.pos_samples, self.pad_token)
         self.max_seq_len = max(torch.max(self.cond_lens).item(), torch.max(self.pos_lens).item())
 
-    def sample(self, num_samples, is_val=False):
+    def sample(self, num_samples, is_val=False, gpu=False):
         """
         Samples the dataset, returns num_samples samples of length max_seq_len, wrapped in variables.
         max_seq_len is the max length among all samples; samples shorter than max_seq_len are padded.
@@ -108,7 +108,7 @@ class DataLoader:
             self.freeze(cond_ids[0], cond_ids[-1])
 
         # Put to GPU
-        if self.gpu:
+        if gpu:
             pos_samples = pos_samples.cuda()
             pos_lens = pos_lens.cuda()
 
@@ -117,7 +117,7 @@ class DataLoader:
 
         return pos_samples, pos_lens, cond_ids, end_of_dataset
 
-    def fetch_cond_samples(self, cond_ids):
+    def fetch_cond_samples(self, cond_ids, gpu=False):
         """
         Return the batch of cond_samples with cond_ids.
 
@@ -130,7 +130,7 @@ class DataLoader:
         cond_samples, cond_lens = self.cond_samples[cond_ids], self.cond_lens[cond_ids]
 
         # Put to GPU
-        if self.gpu:
+        if gpu:
             cond_samples = cond_samples.cuda()
             cond_lens = cond_lens.cuda()
         

@@ -1,3 +1,10 @@
+"""
+GPU issue:
+    To effectively use GPU without reaching its limit, we limit the size
+    of sampled data on GPU to around BATCH_SIZE. Data are constantly
+    switched between GPU and CPU if we were to sample a big batch and keep
+    it, e.g. validation set and training set.
+"""
 from __future__ import print_function
 import argparse
 import logging
@@ -42,12 +49,12 @@ def train_generator_MLE(gen, gen_opt, oracle, epochs, save_path):
         end_of_dataset = False
         while not end_of_dataset: 
             # Sample from oracle
-            pos_samples, pos_lens, cond_ids, end_of_dataset = oracle.sample(BATCH_SIZE)
-            cond_samples, cond_lens = oracle.fetch_cond_samples(cond_ids)
+            pos_samples, pos_lens, cond_ids, end_of_dataset = oracle.sample(BATCH_SIZE, gpu=CUDA)
+            cond_samples, cond_lens = oracle.fetch_cond_samples(cond_ids, gpu=CUDA)
 
             # Train
             gen_opt.zero_grad()
-            loss = gen.batchNLLLoss(cond_samples, cond_lens, pos_samples, pos_lens, teacher_forcing_ratio=TEACHER_FORCING_RATIO)
+            loss = gen.batchNLLLoss(cond_samples, cond_lens, pos_samples, pos_lens, teacher_forcing_ratio=TEACHER_FORCING_RATIO, gpu=CUDA)
             loss.backward()
             gen_opt.step()
 
@@ -90,7 +97,7 @@ def train_generator_PG(gen, gen_opt, dis, oracle, rollout, g_steps, adv_iter, sa
 
         # MC search for reward estimation 
         rollout_targets, rollout_target_lens, rollout_cond, rollout_cond_lens \
-                = rollout.rollout(target, target_lens, cond, cond_lens, ROLLOUT_NUM)
+                = rollout.rollout(target, target_lens, cond, cond_lens, ROLLOUT_NUM, gpu=CUDA)
         rollout_cond_shape = rollout_cond.shape
         rollout_targets_shape = rollout_targets.shape
 
@@ -105,7 +112,7 @@ def train_generator_PG(gen, gen_opt, dis, oracle, rollout, g_steps, adv_iter, sa
         total_rewards = torch.cat([rollout_rewards, rewards])
 
         gen_opt.zero_grad()
-        loss = gen.batchPGLoss(cond, target, total_rewards)
+        loss = gen.batchPGLoss(cond, target, total_rewards, gpu=CUDA)
         loss.backward()
         gen_opt.step()
 
@@ -136,7 +143,7 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter, sa
     valid_set_size = int(dataset_size * VALID_SET_SIZE_RATIO) * 2
     valid_set_size -= valid_set_size % BATCH_SIZE # align with batch size
     val_inp, val_inp_lens, val_cond, val_cond_lens, val_target, end_of_dataset \
-            = helpers.prepare_discriminator_data(oracle, gen, valid_set_size, is_val=True, gpu=False)
+            = helpers.prepare_discriminator_data(oracle, gen, valid_set_size, is_val=True, on_cpu=True, gpu=CUDA, gpu_limit=BATCH_SIZE)
 
     train_set_size = int(oracle.total_samples - valid_set_size / 2) * 2
 
@@ -144,7 +151,7 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter, sa
     for d_step in range(d_steps):
         # Sample training set for this step
         all_inp, all_inp_lens, all_cond, all_cond_lens, all_target, end_of_dataset \
-                = helpers.prepare_discriminator_data(oracle, gen, train_set_size, gpu=False)
+                = helpers.prepare_discriminator_data(oracle, gen, train_set_size, on_cpu=True, gpu=CUDA, gpu_limit=BATCH_SIZE)
         for epoch in range(epochs):
             print(f'd-step {d_step + 1} epoch {epoch + 1} : ', end='')
 
@@ -190,8 +197,8 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter, sa
                 with torch.no_grad():
                     val_acc = 0
                     for i in range(0, valid_set_size, BATCH_SIZE):
-                        _, acc = dis.batchBCELoss(val_inp[i:i+BATCH_SIZE], val_inp_lens[i:i+BATCH_SIZE],
-                                                  val_cond[i:i+BATCH_SIZE], val_cond_lens[i:i+BATCH_SIZE], val_target[i:i+BATCH_SIZE])
+                        _, acc = dis.batchBCELoss(val_inp[i:i+BATCH_SIZE], val_inp_lens[i:i+BATCH_SIZE], val_cond[i:i+BATCH_SIZE],
+                                                  val_cond_lens[i:i+BATCH_SIZE], val_target[i:i+BATCH_SIZE])
                         val_acc += acc
                     val_acc /= valid_set_size
 

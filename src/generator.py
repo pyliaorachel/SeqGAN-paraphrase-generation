@@ -28,9 +28,9 @@ class Generator(nn.Module):
         if gpu:
             self.cuda()
 
-    def init_hidden(self, batch_size=1):
+    def init_hidden(self, batch_size=1, gpu=False):
         h = torch.zeros(1, batch_size, self.hidden_dim) # 1 for num_layers * num_directions
-        return h.cuda() if self.gpu else h
+        return h.cuda() if gpu else h
 
     def forward(self, inp, hidden):
         """
@@ -47,7 +47,7 @@ class Generator(nn.Module):
         out = F.log_softmax(out, dim=1)
         return out, hidden
 
-    def sample(self, cond):
+    def sample(self, cond, gpu=False):
         """
         Samples the network, returns num_samples samples of length max_seq_len, wrapped in variables.
         max_seq_len is the max length among all samples; samples shorter than max_seq_len are padded.
@@ -60,9 +60,9 @@ class Generator(nn.Module):
         """
         num_samples = cond.shape[0]
 
-        out, h = self.encode(cond)
+        out, h = self.encode(cond, gpu=gpu)
         out = self.sample_one(out).view(-1, 1)
-        samples, lens = self.continue_sample_N(out, 1, h)
+        samples, lens = self.continue_sample_N(out, 1, h, gpu=gpu)
         return samples.view((num_samples, -1)), lens.view(-1) # samples: remove second dimension used for N; lens: flatten
 
     def sample_until_end(self, cond, max_len):
@@ -95,7 +95,7 @@ class Generator(nn.Module):
 
         return sample
 
-    def continue_sample_N(self, inp, n, h=None):
+    def continue_sample_N(self, inp, n, h=None, gpu=False):
         """
         Continue to sample given some previous subsequences. Repeated n times.
         Returns n samples of length max_seq_len for each inp subsequence.
@@ -109,16 +109,19 @@ class Generator(nn.Module):
             - samples: batch_size x n x max_seq_len
             - lens: batch_size x n
         """
+        if self.gpu and not gpu:
+            self.cpu()
+
         batch_size, sub_seq_len = inp.size()
         samples = torch.ones(n * batch_size, self.max_seq_len).long() * self.pad_token
 
-        if self.gpu:
+        if gpu:
             samples = samples.cuda()
             inp = inp.cuda()
 
         # If raw sequence is given, encode it first, init rollout stuffs correspondingly
         if h is None: # not encoded, encode input which generates the first output
-            out, h = self.encode(inp)
+            out, h = self.encode(inp, gpu=gpu)
             out = self.sample_one(out)
 
             more_samples = out.unsqueeze(0) # for keeping subsequence sequences, starting from last output 
@@ -139,7 +142,7 @@ class Generator(nn.Module):
         h = h.unsqueeze(1).repeat(1, 1, 1, n).view(1, -1, self.hidden_dim)                   # repeat each hidden vec n times
         out = out.unsqueeze(1).repeat(1, n).view(-1)                                         # repeat each last timestep n times
 
-        if self.gpu:
+        if gpu:
             has_ended = has_ended.cuda()
             lens = lens.cuda()
             more_samples = more_samples.cuda()
@@ -168,9 +171,13 @@ class Generator(nn.Module):
         # Reshape
         lens = lens.view(batch_size, n, -1)
         samples = samples.view(batch_size, n, -1)
+
+        if self.gpu and not gpu:
+            self.cuda()
+
         return samples, lens
 
-    def rollout(self, inp, inp_lens, cond, cond_lens, rollout_num):
+    def rollout(self, inp, inp_lens, cond, cond_lens, rollout_num, gpu=False):
         """
         Rollout rollout_num times for each timestep of inp, based on this generator's policy.
         Returns all rollout sequences.
@@ -183,21 +190,24 @@ class Generator(nn.Module):
             - rollout_targets, rollout_cond: (seq_len - 1) x batch_size x rollout_num x seq_len
             - rollout_target_lens, rollout_cond_lens: (seq_len - 1) x batch_size x rollout_num x seq_len
         """
+        if self.gpu and not gpu:
+            self.cpu()
+
         # Encode cond
-        out, h = self.encode(cond)
+        out, h = self.encode(cond, gpu=gpu)
 
         # Rollout
         batch_size, seq_len = inp.shape
         rollout_targets = torch.ones(seq_len - 1, batch_size, rollout_num, self.max_seq_len).long() * self.pad_token
         rollout_target_lens = torch.zeros(seq_len - 1, batch_size, rollout_num).long()
 
-        if self.gpu:
+        if gpu:
             rollout_targets = rollout_targets.cuda()
             rollout_target_lens = rollout_target_lens.cuda()
 
         for t in range(seq_len-1):
             out, h = self.forward(inp[:, t], h)
-            samples, lens = self.continue_sample_N(inp[:, :t+1], rollout_num, h)
+            samples, lens = self.continue_sample_N(inp[:, :t+1], rollout_num, h, gpu=gpu)
             lens = lens.view(batch_size, -1)
             rollout_targets[t, :], rollout_target_lens[t, :] = samples, lens 
         
@@ -209,13 +219,16 @@ class Generator(nn.Module):
                                 .repeat((seq_len - 1), 1, rollout_num) \
                                 .view((seq_len - 1), batch_size, rollout_num)
 
-        if self.gpu:
+        if gpu:
             rollout_cond = rollout_cond.cuda()
             rollout_cond_lens = rollout_cond_lens.cuda()
 
+        if self.gpu and not gpu:
+            self.cuda()
+
         return rollout_targets, rollout_target_lens, rollout_cond, rollout_cond_lens
 
-    def encode(self, inp):
+    def encode(self, inp, gpu=False):
         """
         Encode the given input.
 
@@ -225,14 +238,20 @@ class Generator(nn.Module):
             - out: batch_size x vocab_size (output for last timestep)
             - h: num_layers * num_directions, batch_size, hidden_dim
         """
+        if self.gpu and not gpu:
+            self.cpu()
+
         # TODO: move to another encoder class, with padding considered
         batch_size, inp_seq_len = inp.shape
         inp = inp.t()           # inp_seq_len x batch_size
-        h = self.init_hidden(batch_size)
+        h = self.init_hidden(batch_size, gpu=gpu)
 
         for i in range(inp_seq_len):
             out, h = self.forward(inp[i], h)
         
+        if self.gpu and not gpu:
+            self.cuda()
+
         return out, h
 
     def sample_one(self, out):
@@ -245,7 +264,7 @@ class Generator(nn.Module):
         # Sampling from each row; exp to turn log_softmax back
         return torch.multinomial(torch.exp(out), 1).view(-1) 
 
-    def batchNLLLoss(self, inp, inp_lens, target, target_lens, teacher_forcing_ratio=0.6):
+    def batchNLLLoss(self, inp, inp_lens, target, target_lens, teacher_forcing_ratio=0.6, gpu=False):
         """
         Returns the NLL Loss for predicting target sequence.
 
@@ -255,11 +274,14 @@ class Generator(nn.Module):
             - target: batch_size x target_seq_len
             - target_lens: batch_size
         """
+        if self.gpu and not gpu:
+            self.cpu()
+
         loss_fn = nn.NLLLoss()
         batch_size, target_seq_len = target.size()
 
         # Encode inp
-        out, h = self.encode(inp)
+        out, h = self.encode(inp, gpu=gpu)
 
         # Decode to output, accumulate loss
         target = target.t()                         # target_seq_len x batch_size
@@ -277,9 +299,12 @@ class Generator(nn.Module):
                 loss += loss_fn(out, target[i])
                 last_out = self.sample_one(out) 
 
+        if self.gpu and not gpu:
+            self.cuda()
+
         return loss # per batch
 
-    def batchPGLoss(self, inp, target, rewards):
+    def batchPGLoss(self, inp, target, rewards, gpu=False):
         """
         Returns a pseudo-loss that gives corresponding policy gradients (on calling .backward()).
         Inspired by the example in http://karpathy.github.io/2016/05/31/rl/
@@ -289,12 +314,15 @@ class Generator(nn.Module):
             - target: batch_size x seq_len
             - rewards: seq_len x batch_size (discriminator reward for each token in the sentence)
         """
+        if self.gpu and not gpu:
+            self.cpu()
+
         batch_size, seq_len = target.shape
         target = target.t()     # seq_len x batch_size
-        h = self.init_hidden(batch_size)
+        h = self.init_hidden(batch_size, gpu=gpu)
 
         # Encode inp, get the first output
-        out, h = self.encode(inp) # out is log_softmax
+        out, h = self.encode(inp, gpu=gpu) # out is log_softmax
 
         # Accumulate loss: log(P(y_t | Y_1:Y_{t-1})) * Q
         log_probs = torch.gather(out, -1, target[0].unsqueeze(1)).view(-1)
@@ -304,6 +332,9 @@ class Generator(nn.Module):
 
             log_probs = torch.gather(out, -1, target.data[i+1].unsqueeze(1)).view(-1)
             loss += -torch.sum(log_probs * rewards[i+1])
+
+        if self.gpu and not gpu:
+            self.cuda()
 
         return loss / batch_size
 

@@ -11,10 +11,10 @@ def prepare_generator_batch(oracle, gen, batch_size, gpu=False):
         - inp_lens, cond_lens: (batch_size * 2)
         - cond_lens: (batch_size * 2)
     """
-    _, _, cond_ids, end_of_dataset = oracle.sample(batch_size)
+    _, _, cond_ids, end_of_dataset = oracle.sample(batch_size, gpu=gpu)
     batch_size = len(cond_ids) # update actual sampled batch size
-    cond, cond_lens = oracle.fetch_cond_samples(cond_ids)
-    target, target_lens = gen.sample(cond)
+    cond, cond_lens = oracle.fetch_cond_samples(cond_ids, gpu=gpu)
+    target, target_lens = gen.sample(cond, gpu=gpu)
 
     # Put to GPU
     if gpu:
@@ -25,10 +25,12 @@ def prepare_generator_batch(oracle, gen, batch_size, gpu=False):
 
     return target, target_lens, cond, cond_lens, end_of_dataset 
 
-def prepare_discriminator_data(oracle, gen, batch_size, is_val=False, gpu=False):
+def prepare_discriminator_data(oracle, gen, batch_size, is_val=False, on_cpu=True, gpu=False, gpu_limit=None):
     """
     Takes positive (target), negative (generator), and condition sample generators/loaders 
     to prepare inp and target samples for discriminator.
+    Put final tensor on cpu if on_cpu is set.
+    Use gpu to generate data if gpu is set, but only gpu_limit size of data can be on GPU at a time.
 
     Returns: inp, inp_lens, cond, cond_lens, target, end_of_dataset
         - inp, cond: batch_size x seq_len
@@ -38,10 +40,28 @@ def prepare_discriminator_data(oracle, gen, batch_size, is_val=False, gpu=False)
     batch_size = int(batch_size / 2) # half for pos, half for neg
 
     # Prepare pos, neg, cond samples
-    pos_samples, pos_lens, cond_ids, end_of_dataset = oracle.sample(batch_size, is_val=is_val)
+    pos_samples, pos_lens, cond_ids, end_of_dataset = oracle.sample(batch_size, is_val=is_val, gpu=gpu)
     batch_size = len(cond_ids) # update actual sampled batch size
-    cond_samples, cond_lens = oracle.fetch_cond_samples(cond_ids)
-    neg_samples, neg_lens = gen.sample(cond_samples)
+    cond_samples, cond_lens = oracle.fetch_cond_samples(cond_ids, gpu=gpu)
+
+    neg_samples = torch.LongTensor().cuda() if not on_cpu and gpu else torch.LongTensor()
+    neg_lens = torch.LongTensor().cuda() if not on_cpu and gpu else torch.LongTensor()
+    for i in range(0, batch_size, gpu_limit):
+        # Generate data with GPU if gpu set
+        if i + gpu_limit <= batch_size:
+            neg_samples_temp, neg_lens_temp = gen.sample(cond_samples[i:i+gpu_limit], gpu=gpu)
+        else:
+            neg_samples_temp, neg_lens_temp = gen.sample(cond_samples[i:], gpu=gpu)
+
+        # Keep data in CPU
+        if on_cpu:
+            neg_samples_temp, neg_lens_temp = neg_samples_temp.cpu(), neg_lens_temp.cpu()
+
+        neg_samples = torch.cat([neg_samples, neg_samples_temp])
+        neg_lens = torch.cat([neg_lens, neg_lens_temp])
+
+    if on_cpu:
+        pos_samples, pos_lens, cond_samples, cond_lens = pos_samples.cpu(), pos_lens.cpu(), cond_samples.cpu(), cond_lens.cpu()
 
     _, pos_seq_len = pos_samples.shape
     _, neg_seq_len = neg_samples.shape
