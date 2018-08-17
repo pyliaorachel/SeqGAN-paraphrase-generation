@@ -26,9 +26,9 @@ G_HD = 32 # hidden dim
 D_ED = 64
 D_HD = 64
 
-VALID_SET_SIZE_RATIO = 0.2
 SAVE_MODEL_ITER = 1
 
+VALID_SET_SIZE_RATIO = 0.1
 dataset_path = './dataset/quora_duplicate_questions.tsv'
 
 model_params = { 'gan': { 'rn': ROLLOUT_NUM, 'tfr': TEACHER_FORCING_RATIO, 'bs': BATCH_SIZE, 'pad': MAX_SEQ_LEN_PADDING },
