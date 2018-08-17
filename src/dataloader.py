@@ -198,7 +198,6 @@ class DataLoader:
         """
         num_samples = self.pos_samples.shape[0]
         
-        self.frozen = (30, 50)
         if self.frozen is not None:
             start, end = self.frozen
             perm = torch.cat([torch.randperm(start), \
