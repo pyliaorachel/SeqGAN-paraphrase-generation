@@ -44,4 +44,4 @@ dependencies:
   - torchvision=0.2.1=py37_1
   - pip:
     - torch==0.4.1
-prefix: /home/pyliaorachel64/anaconda3/envs/seqgan
+
