@@ -37,16 +37,18 @@ def prepare_discriminator_data(oracle, gen, batch_size, is_val=False, on_cpu=Tru
         - inp_lens, cond_lens: batch_size
         - target: batch_size (boolean 1/0)
     """
-    batch_size = int(batch_size / 2) # half for pos, half for neg
+    half_batch_size = int(batch_size / 2) # half for pos, half for neg
+    pad_token = oracle.pad_token
 
     # Prepare pos, neg, cond samples
-    pos_samples, pos_lens, cond_ids, end_of_dataset = oracle.sample(batch_size, is_val=is_val, gpu=gpu)
-    batch_size = len(cond_ids) # update actual sampled batch size
+    pos_samples, pos_lens, cond_ids, end_of_dataset = oracle.sample(half_batch_size, is_val=is_val, gpu=gpu)
+    half_batch_size = len(cond_ids) # update actual sampled batch size
+    batch_size = half_batch_size * 2
     cond_samples, cond_lens = oracle.fetch_cond_samples(cond_ids, gpu=gpu)
 
     neg_samples = torch.LongTensor().cuda() if not on_cpu and gpu else torch.LongTensor()
     neg_lens = torch.LongTensor().cuda() if not on_cpu and gpu else torch.LongTensor()
-    for i in range(0, batch_size, gpu_limit):
+    for i in range(0, half_batch_size, gpu_limit): # don't place data of over gpu_limit number of samples on GPU; gen.sample may explode
         # Generate data with GPU if gpu set
         neg_samples_temp, neg_lens_temp = gen.sample(cond_samples[i:i+gpu_limit], gpu=gpu)
 
@@ -54,8 +56,11 @@ def prepare_discriminator_data(oracle, gen, batch_size, is_val=False, on_cpu=Tru
         if on_cpu:
             neg_samples_temp, neg_lens_temp = neg_samples_temp.cpu(), neg_lens_temp.cpu()
 
-        neg_samples = torch.cat([neg_samples, neg_samples_temp])
-        neg_lens = torch.cat([neg_lens, neg_lens_temp])
+        if neg_samples.shape[0] == 0:
+            neg_samples = torch.cat([neg_samples, neg_samples_temp])
+            neg_lens = torch.cat([neg_lens, neg_lens_temp])
+        else:
+            neg_samples, neg_lens = cat_samples(neg_samples, neg_lens, neg_samples_temp, neg_lens_temp, pad_token)
 
     if on_cpu:
         pos_samples, pos_lens, cond_samples, cond_lens = pos_samples.cpu(), pos_lens.cpu(), cond_samples.cpu(), cond_lens.cpu()
@@ -64,27 +69,17 @@ def prepare_discriminator_data(oracle, gen, batch_size, is_val=False, on_cpu=Tru
     _, neg_seq_len = neg_samples.shape
     _, cond_seq_len = cond_samples.shape
 
-    pad_token = oracle.pad_token
-
     # Concat
     inp, inp_lens = cat_samples(pos_samples, pos_lens, neg_samples, neg_lens, pad_token)
     cond, cond_lens = cat_samples(cond_samples, cond_lens, cond_samples, cond_lens, pad_token)
 
     # Construct target
-    target = torch.ones(batch_size * 2)
-    target[batch_size:] = 0 # first half is pos, second half is neg
+    target = torch.ones(batch_size)
+    target[half_batch_size:] = 0 # first half is pos, second half is neg
 
     # Shuffle
-    perm = torch.randperm(batch_size * 2)
+    perm = torch.randperm(batch_size)
     inp, inp_lens, cond, cond_lens, target = inp[perm], inp_lens[perm], cond[perm], cond_lens[perm], target[perm]
-
-    # Put to GPU
-    if gpu:
-        inp = inp.cuda()
-        inp_lens = inp_lens.cuda()
-        cond = cond.cuda()
-        cond_lens = cond_lens.cuda()
-        target = target.cuda()
 
     return inp, inp_lens, cond, cond_lens, target, end_of_dataset
 
@@ -149,14 +144,14 @@ def cat_samples(samples_1, lens_1, samples_2, lens_2, pad_token):
         - samples: num_samples x seq_len
         - lens: num_samples
     """
-    num_samples = len(samples_1) # same length for samples_1 and samples_2
+    num_samples_1, num_samples_2 = len(samples_1), len(samples_2)
     seq_len_1, seq_len_2 = samples_1.shape[1], samples_2.shape[1]
     max_len = max(seq_len_1, seq_len_2)
 
     # Concat & pad
-    samples = np.ones((num_samples * 2, max_len), dtype=np.int) * pad_token
-    samples[:num_samples, :seq_len_1] = samples_1
-    samples[num_samples:, :seq_len_2] = samples_2
+    samples = np.ones((num_samples_1 + num_samples_2, max_len), dtype=np.int) * pad_token
+    samples[:num_samples_1, :seq_len_1] = samples_1
+    samples[num_samples_1:, :seq_len_2] = samples_2
     samples = torch.LongTensor(samples)
     lens = torch.cat([lens_1, lens_2])
 
