@@ -159,13 +159,9 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter, sa
             total_acc = 0
             for i in range(0, train_set_size, BATCH_SIZE):
                 # Sample batch & move to GPU
-                if i + BATCH_SIZE <= train_set_size:
-                    inp, inp_lens, cond, cond_lens, target \
-                            = all_inp[i:i+BATCH_SIZE], all_inp_lens[i:i+BATCH_SIZE], \
-                              all_cond[i:i+BATCH_SIZE], all_cond_lens[i:i+BATCH_SIZE], all_target[i:i+BATCH_SIZE]
-                else:
-                    inp, inp_lens, cond, cond_lens, target \
-                            = all_inp[i:], all_inp_lens[i:], all_cond[i:], all_cond_lens[i:], all_target[i:]
+                inp, inp_lens, cond, cond_lens, target \
+                        = all_inp[i:i+BATCH_SIZE], all_inp_lens[i:i+BATCH_SIZE], \
+                          all_cond[i:i+BATCH_SIZE], all_cond_lens[i:i+BATCH_SIZE], all_target[i:i+BATCH_SIZE]
 
                 if CUDA:
                     inp, inp_lens, cond, cond_lens, target = inp.cuda(), inp_lens.cuda(), cond.cuda(), cond_lens.cuda(), target.cuda()

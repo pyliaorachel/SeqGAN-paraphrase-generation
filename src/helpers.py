@@ -48,10 +48,7 @@ def prepare_discriminator_data(oracle, gen, batch_size, is_val=False, on_cpu=Tru
     neg_lens = torch.LongTensor().cuda() if not on_cpu and gpu else torch.LongTensor()
     for i in range(0, batch_size, gpu_limit):
         # Generate data with GPU if gpu set
-        if i + gpu_limit <= batch_size:
-            neg_samples_temp, neg_lens_temp = gen.sample(cond_samples[i:i+gpu_limit], gpu=gpu)
-        else:
-            neg_samples_temp, neg_lens_temp = gen.sample(cond_samples[i:], gpu=gpu)
+        neg_samples_temp, neg_lens_temp = gen.sample(cond_samples[i:i+gpu_limit], gpu=gpu)
 
         # Keep data in CPU
         if on_cpu:
