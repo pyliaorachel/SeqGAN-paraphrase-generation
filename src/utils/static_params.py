@@ -1,9 +1,9 @@
 import torch
 
 
-DEBUG = False
+DEBUG = False # Run for fewer iterations/epochs/steps
 LIGHT_VER = False # Light version of dataset
-NO_SAVE = False
+NO_SAVE = False # Save model
 
 END_TOKEN = '<E>'
 PAD_TOKEN = '<P>'
