@@ -6,7 +6,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import pdb
 
-from . import helpers
+from .utils import helpers
+
 
 class Discriminator(nn.Module):
     def __init__(self, embedding_dim, hidden_dim, vocab_size, max_seq_len=30, end_token=1, pad_token=0, gpu=False, dropout=0.2):

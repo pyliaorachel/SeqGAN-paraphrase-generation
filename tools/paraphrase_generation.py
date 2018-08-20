@@ -4,8 +4,8 @@ import torch
 
 from src.generator import Generator
 from src.dataloader import DataLoader
-from src.pathbuilder import PathBuilder
-from src.static_params import *
+from src.utils.pathbuilder import PathBuilder
+from src.utils.static_params import *
 
 
 def parse_args():

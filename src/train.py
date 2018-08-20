@@ -20,13 +20,10 @@ import torch.optim as optim
 import torch.nn as nn
 import torch.nn.functional as F
 
-from . import generator
-from . import discriminator
-from . import dataloader
-from . import pathbuilder
-from .hyper_params import *
-from .static_params import *
-from . import helpers
+from . import generator, discriminator
+from .utils import dataloader, pathbuilder, word_embeddings, helpers
+from .utils.hyper_params import *
+from .utils.static_params import *
 
 
 def parse_args():

@@ -6,7 +6,7 @@ import pdb
 import math
 import torch.nn.init as init
 
-from . import helpers
+from .utils import helpers
 
 
 class Generator(nn.Module):
