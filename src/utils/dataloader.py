@@ -21,8 +21,9 @@ from . import helpers
 
 
 class DataLoader:
-    def __init__(self, filepath, end_token_str='<E>', pad_token_str='<P>', gpu=False, light_ver=False):
+    def __init__(self, filepath, word_emb, end_token_str='<E>', pad_token_str='<P>', gpu=False, light_ver=False):
         self.filepath = filepath
+        self.word_emb = word_emb
         self.gpu = gpu
         self.light_ver = light_ver # Smaller dataset
         self.end_token_str = end_token_str
@@ -64,15 +65,20 @@ class DataLoader:
 
                 # columns: id, qid1, qid2, question1, question2, is_duplicate
                 if row[-1] == '1': # positive examples
-                    q1 = nltk.word_tokenize(row[3]) + [self.end_token_str]
-                    q2 = nltk.word_tokenize(row[4]) + [self.end_token_str]
+                    q1_str = row[3].lower()
+                    q2_str = row[4].lower()
+                    q1_tokens = nltk.word_tokenize(q1_str)
+                    q2_tokens = nltk.word_tokenize(q2_str)
+
+                    q1 = q1_tokens + [self.end_token_str]
+                    q2 = q2_tokens + [self.end_token_str]
                     cond_samples.append(q1)
                     pos_samples.append(q2)
-                    vocab += nltk.word_tokenize(row[3]) + nltk.word_tokenize(row[4])
+                    vocab += q1_tokens + q2_tokens
 
         self.vocab = sorted(list(set(vocab)))
-        self.word_to_int = dict((w, i) for i, w in enumerate(self.vocab))
-        self.int_to_word = dict((i, w) for i, w in enumerate(self.vocab))
+        self.word_emb.create_emb_matrix(self.vocab)
+        self.word_to_int, self.int_to_word = self.word_emb.word_to_int, self.word_emb.int_to_word
 
         # Map dataset
         self.cond_samples = [self.sent_to_ints(q) for q in cond_samples]

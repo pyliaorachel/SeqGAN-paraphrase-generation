@@ -217,18 +217,22 @@ if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO,
                         filename=f'./log/{t}_{pb.whole_string()}.log')
 
-    '''Create oracle data loader for pos examples, generator & discriminator for adversarial training, and rollout for MC search'''
+    '''
+    Create oracle data loader for pos examples, generator & discriminator for adversarial training, and rollout for MC search.
+    Create word embeddings, which are randomly initialized or loaded from pretrained word embeddings.
+    '''
 
-    oracle = dataloader.DataLoader(dataset_path, end_token_str=END_TOKEN, pad_token_str=PAD_TOKEN, gpu=CUDA, light_ver=LIGHT_VER)
+    word_emb = word_embeddings.WordEmbeddings(ED, pretrained_emb_path_prefix)
+    oracle = dataloader.DataLoader(dataset_path, word_emb, end_token_str=END_TOKEN, pad_token_str=PAD_TOKEN, gpu=CUDA, light_ver=LIGHT_VER)
     oracle.load()
-    end_token, pad_token, max_seq_len, vocab_size = oracle.end_token, oracle.pad_token, oracle.max_seq_len, len(oracle.vocab) 
+    end_token, pad_token, max_seq_len = oracle.end_token, oracle.pad_token, oracle.max_seq_len
     max_seq_len += MAX_SEQ_LEN_PADDING # give room for longer sequences
 
-    gen = generator.Generator(G_ED, G_HD, vocab_size, end_token=end_token, pad_token=pad_token,
+    gen = generator.Generator(ED, G_HD, word_emb, end_token=end_token, pad_token=pad_token,
                               max_seq_len=max_seq_len, gpu=CUDA)
-    dis = discriminator.Discriminator(D_ED, D_HD, vocab_size, end_token=end_token, pad_token=pad_token,
+    dis = discriminator.Discriminator(ED, D_HD, word_emb, end_token=end_token, pad_token=pad_token,
                                       max_seq_len=max_seq_len, gpu=CUDA)
-    rollout = generator.Generator(G_ED, G_HD, vocab_size, end_token=end_token, pad_token=pad_token,
+    rollout = generator.Generator(ED, G_HD, word_emb, end_token=end_token, pad_token=pad_token,
                                   max_seq_len=max_seq_len, gpu=CUDA)
     rollout.turn_off_grads() # rollout does not need to be backpropagated
 

@@ -13,14 +13,16 @@ D_TRAIN_STEPS = 1 if DEBUG else 3
 D_TRAIN_EPOCHS = 1 if DEBUG else 2
 ADV_TRAIN_ITERS = 3 if DEBUG else 20
 
-G_ED = 32 # embedding dim
+# Embedding dim must be one of those in pretrained word embeddings: 25, 50, 100, 200
+ED = 50 # embedding dim
 G_HD = 32 # hidden dim
-D_ED = 64
 D_HD = 64
 
+pretrained_emb_path_prefix = f'./dataset/pretrained_word_embeddings/glove_{ED}'
+
 model_params = { 'gan': { 'rn': ROLLOUT_NUM, 'tfr': TEACHER_FORCING_RATIO, 'bs': BATCH_SIZE, 'pad': MAX_SEQ_LEN_PADDING },
-                 'G': { 'ed': G_ED, 'hd': G_HD },
-                 'D': { 'ed': D_ED, 'hd': D_HD }}
+                 'G': { 'ed': ED, 'hd': G_HD },
+                 'D': { 'ed': ED, 'hd': D_HD }}
 training_params = { 'gan': { 'iter': ADV_TRAIN_ITERS },
                     'G': { 'st': G_TRAIN_STEPS, 'ep': 1 },
                     'D': { 'st': D_TRAIN_STEPS, 'ep': D_TRAIN_EPOCHS }}

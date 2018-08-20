@@ -10,13 +10,13 @@ from .utils import helpers
 
 
 class Discriminator(nn.Module):
-    def __init__(self, embedding_dim, hidden_dim, vocab_size, max_seq_len=30, end_token=1, pad_token=0, gpu=False, dropout=0.2):
+    def __init__(self, embedding_dim, hidden_dim, word_emb, max_seq_len=30, end_token=1, pad_token=0, gpu=False, dropout=0.2):
         super().__init__()
 
         self.hidden_dim = hidden_dim
         self.embedding_dim = embedding_dim
         self.max_seq_len = max_seq_len
-        self.vocab_size = vocab_size
+        self.word_emb = word_emb
         self.gpu = gpu
         self.end_token = end_token
         self.pad_token = pad_token
@@ -32,11 +32,20 @@ class Discriminator(nn.Module):
         self.dropout_linear_cond = nn.Dropout(p=dropout)
 
         # Shared
-        self.embeddings = nn.Embedding(vocab_size, embedding_dim)
+        self.embeddings = self.init_emb()
         self.hidden2out = nn.Linear(hidden_dim * 2, 1)
 
         if gpu:
             self.cuda()
+
+    def init_emb(self, trainable=True):
+        emb_layer = nn.Embedding(self.word_emb.vocab_size, self.embedding_dim)
+        emb_layer.load_state_dict({ 'weight': self.word_emb.emb })
+
+        if not trainable:
+            emb_layer.weight.requires_grad = False
+
+        return emb_layer
 
     def init_hidden(self, batch_size):
         h = torch.zeros(2 * 2 * 1, batch_size, self.hidden_dim)
