@@ -110,3 +110,4 @@ venv.bak/
 *.swp
 backup/
 model/
+dataset/pretrained_word_embeddings/original/
