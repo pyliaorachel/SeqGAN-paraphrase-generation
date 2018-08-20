@@ -11,9 +11,10 @@
 
 # Usage
 
-```
+```bash
 # Install dependencies
 $ conda create -n <env-name> --file requirements.txt # if using Anaconda to create virtual env
+$ source activate <env-name>                         # enter virtual env
 ## OR other methods, e.g.
 $ pip3 install -r requirements.txt
 
@@ -28,7 +29,7 @@ $ python3 -m src.train
 
 # Project structure
 
-```
+```bash
 .
 ├── dataset
 │   ├── pretrained_word_embeddings    # not included by git, download word embedding dataset and see Usage to create parsed files
@@ -38,6 +39,7 @@ $ python3 -m src.train
 │   │       ├── glove.twitter.27B.50d.txt
 │   │       └── ...
 │   └── quora_duplicate_questions.tsv # downloaded from https://data.quora.com/First-Quora-Dataset-Release-Question-Pairs
+├── environment.yml                   # conda env details
 ├── log                               # storing logs named by timestamp and hyperparameters
 ├── README.md
 ├── requirements.txt                  # dependency details
