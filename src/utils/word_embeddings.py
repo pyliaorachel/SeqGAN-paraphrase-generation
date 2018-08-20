@@ -36,7 +36,7 @@ class WordEmbeddings:
                 self.emb[i] = word_to_vec[word] if word in word_to_vec else np.random.normal(scale=0.6, size=(self.embedding_dim,))
         else:
             self.emb = np.random.normal(scale=0.6, size=(vocab_size, self.embedding_dim))
-            
+
         self.emb = torch.Tensor(self.emb)
         self.word_to_int = dict((w, i) for i, w in enumerate(vocab))
         self.int_to_word = dict((i, w) for i, w in enumerate(vocab))
