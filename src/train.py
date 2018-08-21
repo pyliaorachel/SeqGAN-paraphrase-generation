@@ -38,6 +38,7 @@ def train_generator_MLE(gen, gen_opt, oracle, epochs, save_path):
     gen.train()
     oracle.reset()
 
+    teacher_forcing_ratio = TEACHER_FORCING_RATIO
     for epoch in range(epochs):
         print(f'epoch {epoch + 1} : ', end='')
 
@@ -51,7 +52,7 @@ def train_generator_MLE(gen, gen_opt, oracle, epochs, save_path):
 
             # Train
             gen_opt.zero_grad()
-            loss = gen.batchNLLLoss(cond_samples, cond_lens, pos_samples, pos_lens, teacher_forcing_ratio=TEACHER_FORCING_RATIO, gpu=CUDA)
+            loss = gen.batchNLLLoss(cond_samples, cond_lens, pos_samples, pos_lens, teacher_forcing_ratio=teacher_forcing_ratio, gpu=CUDA)
             loss.backward()
             gen_opt.step()
 
@@ -67,6 +68,11 @@ def train_generator_MLE(gen, gen_opt, oracle, epochs, save_path):
 
         total_loss /= oracle.total_samples # loss in each batch is size_averaged, so divide by num of batches is loss per sample
         logging.info(f'[G_MLE] epoch = {epoch + 1}, average_train_NLL = {total_loss:.4f}')
+
+        # Decrease teacher forcing ratio every few epochs
+        if epoch != 0 and epoch % 2 == 0:
+            teacher_forcing_ratio -= TEACHER_FORCING_RATIO_DECR_STEP
+            teacher_forcing_ratio = max(teacher_forcing_ratio, 0)
 
     if not NO_SAVE:
        torch.save(gen.state_dict(), save_path)
