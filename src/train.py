@@ -117,6 +117,7 @@ def train_generator_PG(gen, gen_opt, dis, oracle, rollout, g_steps, adv_iter, sa
         rewards = dis.batchClassify(target, target_lens, cond, cond_lens).unsqueeze(0)
         total_rewards = torch.cat([rollout_rewards, rewards])
 
+        # Train
         gen_opt.zero_grad()
         loss = gen.batchPGLoss(cond, target, total_rewards, gpu=CUDA)
         loss.backward()
