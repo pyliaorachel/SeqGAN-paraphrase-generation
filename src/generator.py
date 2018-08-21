@@ -275,7 +275,7 @@ class Generator(nn.Module):
         # Sampling from each row; exp to turn log_softmax back
         return torch.multinomial(torch.exp(out), 1).view(-1) 
 
-    def batchNLLLoss(self, inp, inp_lens, target, target_lens, teacher_forcing_ratio=0.6, gpu=False):
+    def batchNLLLoss(self, inp, inp_lens, target, target_lens, teacher_forcing_ratio=0, gpu=False):
         """
         Returns the NLL Loss for predicting target sequence.
 
