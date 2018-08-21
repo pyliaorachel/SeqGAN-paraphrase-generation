@@ -1,6 +1,7 @@
 """
 Sample usage:
-    loader = DataLoader('dataset/quora_duplicate_questions.tsv')
+    word_emb = WordEmbeddings(50, 'path/to/pretrained/embeddings')
+    loader = DataLoader('dataset/quora_duplicate_questions.tsv', word_emb)
     loader.load()
 
     num_samples = 10
