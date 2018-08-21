@@ -41,6 +41,7 @@ $ python3 -m src.train
 │   └── quora_duplicate_questions.tsv # downloaded from https://data.quora.com/First-Quora-Dataset-Release-Question-Pairs
 ├── environment.yml                   # conda env details
 ├── log                               # storing logs named by timestamp and hyperparameters
+├── model                             # storing trained models
 ├── README.md
 ├── requirements.txt                  # dependency details
 ├── src
@@ -59,4 +60,4 @@ $ python3 -m src.train
     ├── __init__.py
     ├── paraphrase_generation.py      # interactive script, generate paraphrase given a sentence
     ├── parse_emb.py                  # parse word embedding vectors and mappings from raw file
-    └── visualize_log.py              # visualize los, acc, etc. information in a given log fil:q`
+    └── visualize_log.py              # visualize loss, acc, etc. information in a given log file`
