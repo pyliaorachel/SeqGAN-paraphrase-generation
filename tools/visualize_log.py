@@ -1,4 +1,5 @@
 import argparse
+import os
 import re
 from collections import defaultdict
 
@@ -23,8 +24,10 @@ class Extractor:
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Visualize logs')
-    parser.add_argument('file', type=str, metavar='F',
+    parser.add_argument('file', type=str, metavar='file',
                         help='log file to visualize')
+    parser.add_argument('output_dir', type=str, metavar='output-dir',
+                        help='output directory for plots')
     return parser.parse_args()
 
 def parse_data(filename):
@@ -125,7 +128,16 @@ def parse_data(filename):
 
     return data
 
-def visualize(data):
+def parse_savepath(filename, output_dir):
+    raw_filename = os.path.splitext(os.path.basename(filename))[0]
+    output_loss = os.path.join(output_dir, f'{raw_filename}_loss.png')
+    output_acc = os.path.join(output_dir, f'{raw_filename}_acc.png')
+    return output_loss, output_acc
+
+def visualize(filename, output_dir):
+    data = parse_data(filename)
+    savepath_loss, savepath_acc = parse_savepath(filename, output_dir)
+
     # G_MLE pretraining loss, G_PG training loss, & D training loss
     f, axarr = plt.subplots(len(data), 1)
     f.suptitle('Training Losses')
@@ -140,7 +152,7 @@ def visualize(data):
         axarr[i].set_xticklabels(ticklabels)
 
     f.tight_layout(rect=[0, 0, 1, 0.95])
-    plt.show()
+    plt.savefig(savepath_loss)
 
     # D training & valid accuracy 
     f, ax = plt.subplots()
@@ -158,9 +170,8 @@ def visualize(data):
     ax.set_xticklabels(ticklabels)
 
     f.tight_layout(rect=[0, 0, 1, 0.95])
-    plt.show()
+    plt.savefig(savepath_acc)
 
 if __name__ == '__main__':
     args = parse_args()
-    data = parse_data(args.file)
-    visualize(data)
+    visualize(args.file, args.output_dir)
