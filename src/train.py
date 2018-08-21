@@ -95,6 +95,9 @@ def train_generator_PG(gen, gen_opt, dis, oracle, rollout, g_steps, adv_iter, sa
         if end_of_dataset:
             break
 
+        # Set rollout policy to be the same as the generator; note that rollout doesn't enable computing gradients
+        rollout.load_state_dict(gen.state_dict())
+
         # Sample from generator
         target, target_lens, cond, cond_lens, end_of_dataset = helpers.prepare_generator_batch(oracle, gen, BATCH_SIZE, gpu=CUDA)
 
