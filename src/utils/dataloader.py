@@ -22,7 +22,7 @@ from . import helpers
 
 
 class DataLoader:
-    def __init__(self, filepath, word_emb, end_token_str='<E>', pad_token_str='<P>', gpu=False, light_ver=False):
+    def __init__(self, filepath, word_emb, train_size=53000, test_size=30000, end_token_str='<E>', pad_token_str='<P>', gpu=False, light_ver=False, mode='train'):
         self.filepath = filepath
         self.word_emb = word_emb
         self.gpu = gpu
@@ -30,7 +30,11 @@ class DataLoader:
         self.end_token_str = end_token_str
         self.pad_token_str = pad_token_str
 
-        self.light_size = 1000
+        self.train_size = train_size if not light_ver else 1000
+        self.test_size = test_size if not light_ver else 300
+        self.total_samples = self.train_size + self.test_size
+        self.mode = mode
+
         self.end_token = 1
         self.pad_token = 0
         self.cond_samples = None
@@ -45,13 +49,12 @@ class DataLoader:
         self.fetcher = self.fetch()
         self.frozen = None 
 
-    @property
-    def total_samples(self):
-        return len(self.pos_samples) if self.pos_samples is not None else None
-
     def load(self):
         """
         Load data from dataset. Stores input and target data (padded), word to index mapping, and vocabulary.
+        Only keep data based on train/test mode. If mode is 'train', keep the first train_size samples;
+        if mode is 'test', keep the test_size samples after the first train_size samples.
+        However, all train_size + test_size samples need to be read in order to build the vocabulary information.
         """
         # Build vocab & mapping
         cond_samples = []
@@ -60,8 +63,9 @@ class DataLoader:
         with open(self.filepath, 'r') as fin:
             fin.readline() # ignore header
             reader = csv.reader(fin, delimiter='\t')
+
             for row in reader:
-                if self.light_ver and len(cond_samples) >= self.light_size:
+                if len(cond_samples) >= self.total_samples:
                     break
 
                 # columns: id, qid1, qid2, question1, question2, is_duplicate
@@ -81,9 +85,12 @@ class DataLoader:
         self.word_emb.create_emb_matrix(self.vocab)
         self.word_to_int, self.int_to_word = self.word_emb.word_to_int, self.word_emb.int_to_word
 
+        # Keep only train/test set
+        start, end = (0, self.train_size) if self.mode == 'train' else (self.train_size, self.train_size + self.test_size)
+
         # Map dataset
-        self.cond_samples = [self.sent_to_ints(q) for q in cond_samples]
-        self.pos_samples = [self.sent_to_ints(q) for q in pos_samples]
+        self.cond_samples = [self.sent_to_ints(q) for q in cond_samples[start:end]]
+        self.pos_samples = [self.sent_to_ints(q) for q in pos_samples[start:end]]
 
         # Map special tokens
         self.end_token = self.word_to_int[self.end_token_str]
@@ -220,7 +227,7 @@ class DataLoader:
 
     def freeze(self, start, end):
         """
-        Freeze samples so that they won't be fetched.
+        Freeze samples so that they won't be fetched. Used for splitting validation set from training set.
         Only one batch can be frozen at a time.
         """
         self.frozen = (start, end) 

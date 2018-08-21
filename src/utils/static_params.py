@@ -10,6 +10,8 @@ PAD_TOKEN = '<P>'
 
 CUDA = torch.cuda.is_available()
 
+TRAIN_SIZE = 53000
+TEST_SIZE = 30000
 VALID_SET_SIZE_RATIO = 0.1
 
 dataset_path = './dataset/quora_duplicate_questions.tsv'

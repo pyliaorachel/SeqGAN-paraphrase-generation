@@ -146,13 +146,12 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter, sa
     oracle.reset()
 
     # Generate a small validation set before training (using oracle and generator)
-    dataset_size = oracle.total_samples
-    valid_set_size = int(dataset_size * VALID_SET_SIZE_RATIO) * 2
+    valid_set_size = int(oracle.train_size * VALID_SET_SIZE_RATIO) * 2
     valid_set_size -= valid_set_size % BATCH_SIZE # align with batch size
+    train_set_size = int(((oracle.train_size * 2) - valid_set_size) / 2)
+
     val_inp, val_inp_lens, val_cond, val_cond_lens, val_target, end_of_dataset \
             = helpers.prepare_discriminator_data(oracle, gen, valid_set_size, is_val=True, on_cpu=True, gpu=CUDA, gpu_limit=BATCH_SIZE)
-
-    train_set_size = int(oracle.total_samples - valid_set_size / 2) * 2
 
     # Train discriminator
     for d_step in range(d_steps):
@@ -233,7 +232,8 @@ if __name__ == '__main__':
     '''
 
     word_emb = word_embeddings.WordEmbeddings(ED, pretrained_emb_path_prefix)
-    oracle = dataloader.DataLoader(dataset_path, word_emb, end_token_str=END_TOKEN, pad_token_str=PAD_TOKEN, gpu=CUDA, light_ver=LIGHT_VER)
+    oracle = dataloader.DataLoader(dataset_path, word_emb, train_size=TRAIN_SIZE, test_size=TEST_SIZE,
+                                   end_token_str=END_TOKEN, pad_token_str=PAD_TOKEN, gpu=CUDA, light_ver=LIGHT_VER)
     oracle.load()
     end_token, pad_token, max_seq_len = oracle.end_token, oracle.pad_token, oracle.max_seq_len
     max_seq_len += MAX_SEQ_LEN_PADDING # give room for longer sequences
