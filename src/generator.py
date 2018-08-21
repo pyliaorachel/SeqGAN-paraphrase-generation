@@ -218,7 +218,9 @@ class Generator(nn.Module):
             out, h = self.forward(inp[:, t], h)
             samples, lens = self.continue_sample_N(inp[:, :t+1], rollout_num, h, gpu=gpu)
             lens = lens.view(batch_size, -1)
-            rollout_targets[t, :], rollout_target_lens[t, :] = samples, lens 
+
+            samples_seq_len = samples.shape[-1]
+            rollout_targets[t, :, :, :samples_seq_len], rollout_target_lens[t, :] = samples, lens
         
         # Repeat conditions
         rollout_cond = cond.view(1, batch_size, 1, -1) \
