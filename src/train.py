@@ -222,7 +222,7 @@ if __name__ == '__main__':
     t = time.strftime('%Y-%m-%d_%H:%M:%S', time.localtime())
 
     args = parse_args()
-    pb = pathbuilder.PathBuilder(model_params, training_params, pretrain_params, no_save=NO_SAVE)
+    pb = pathbuilder.PathBuilder(TRAIN_SIZE, TEST_SIZE, model_params, training_params, pretrain_params, no_save=NO_SAVE)
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO,
                         filename=f'./log/{t}_{pb.whole_string()}.log')
 

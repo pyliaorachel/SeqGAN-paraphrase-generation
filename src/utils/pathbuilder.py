@@ -12,15 +12,17 @@ def dotjoin(values):
     return '.'.join([str(v) for v in values])
 
 class PathBuilder:
-    def __init__(self, model_params={}, training_params={}, pretrain_params={}, model_file_suffix='trc', path=None, debug=False, no_save=False):
+    def __init__(self, train_size=0, test_size=0, model_params={}, training_params={}, pretrain_params={}, model_file_suffix='trc', path=None, debug=False, no_save=False):
         """
         Inputs:
             - model_params, training_params: {'model_name': {'param_name': param_value}}
         """
         if path is not None:
             dir_path = os.path.dirname(path)
-            model_params, training_params, pretrain_params = self.unparse_path(dir_path)
+            train_size, test_size, model_params, training_params, pretrain_params = self.unparse_path(dir_path)
 
+        self.train_size = train_size
+        self.test_size = test_size
         self.model_params = model_params
         self.training_params = training_params
         self.pretrain_params = pretrain_params
@@ -56,13 +58,14 @@ class PathBuilder:
         return '_'.join(self.model_pretrain_path_prefix.split('/'))
 
     def update_model_path_prefix(self):
+        train_test_set = f'{self.train_size}_{self.test_size}'
         model_params = [ulinejoin([model] + [dashjoin([pk, pv]) for pk, pv in params.items()]) for model, params in self.model_params.items()]
         training_params = [ulinejoin([model] + [dashjoin([pk, pv]) for pk, pv in params.items()]) for model, params in self.training_params.items()]
         pretrain_params = [ulinejoin([model] + [dashjoin([pk, pv]) for pk, pv in params.items()]) for model, params in self.pretrain_params.items()]
 
         # Main model
         old_prefix = self.model_path_prefix
-        self.model_path_prefix = os.path.join('model', ulinejoin(model_params), ulinejoin(training_params))
+        self.model_path_prefix = os.path.join('model', train_test_set, ulinejoin(model_params), ulinejoin(training_params))
 
         if old_prefix is not None and os.path.exists(old_prefix):
             os.rename(old_prefix, self.model_path_prefix)
@@ -96,19 +99,20 @@ class PathBuilder:
             self.has_trained_models = False 
         else:
             path = os.path.dirname(pretrain_paths[0]) 
-            self.model_params, self.training_params, self.pretrain_params = self.unparse_path(path)
+            self.train_size, self.test_size, self.model_params, self.training_params, self.pretrain_params = self.unparse_path(path)
             self.update_model_path_prefix()
             self.has_pretrained_models = True
             self.has_trained_models = len(paths) != 0
 
     def unparse_path(self, path):
-        _, model_params_str, training_params_str, _, pretrain_params_str = os.path.normpath(path).split(os.path.sep)
+        _, train_test_set, model_params_str, training_params_str, _, pretrain_params_str = os.path.normpath(path).split(os.path.sep)
 
+        train_size, test_size = [int(s) for s in train_test_set.split('_')]
         model_params = self.unparse_params_str(model_params_str)
         training_params = self.unparse_params_str(training_params_str)
         pretrain_params = self.unparse_params_str(pretrain_params_str)
 
-        return model_params, training_params, pretrain_params 
+        return train_size, test_size, model_params, training_params, pretrain_params
         
     def unparse_params_str(self, params_str):
         params_str_list = params_str.split('_')
