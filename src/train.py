@@ -70,7 +70,7 @@ def train_generator_MLE(gen, gen_opt, oracle, epochs, save_path):
         logging.info(f'[G_MLE] epoch = {epoch + 1}, average_train_NLL = {total_loss:.4f}')
 
         # Decrease teacher forcing ratio every few epochs
-        if epoch != 0 and epoch % 2 == 0:
+        if epoch != 0 and epoch % TEACHER_FORCING_UPDATE_EP == 0:
             teacher_forcing_ratio -= TEACHER_FORCING_RATIO_DECR_STEP
             teacher_forcing_ratio = max(teacher_forcing_ratio, 0)
 
