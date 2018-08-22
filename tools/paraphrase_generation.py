@@ -11,8 +11,12 @@ from src.utils.static_params import *
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Paraphrase generation')
-    parser.add_argument('model', type=str, metavar='F',
+    parser.add_argument('model', type=str, metavar='model',
                         help='pretrained model directry path; must end with slash')
+    parser.add_argument('--pretrained', dest='pretrained', action='store_true',
+                        help='use pretrained generator')
+    parser.add_argument('--mode', type=str, choices={'test', 'train'}, metavar='mode', default='test',
+                        help='generate on train or test set (default: test)')
     return parser.parse_args()
 
 def generate(gen, oracle):
@@ -34,13 +38,20 @@ if __name__ == '__main__':
     pb = PathBuilder(path=args.model)
 
     word_emb = WordEmbeddings(pb.model_params['G']['ed'])
-    oracle = DataLoader(dataset_path, word_emb, end_token_str=END_TOKEN, pad_token_str=PAD_TOKEN, gpu=False, light_ver=LIGHT_VER)
+    oracle = DataLoader(dataset_path, word_emb, TRAIN_SIZE, TEST_SIZE, end_token_str=END_TOKEN, pad_token_str=PAD_TOKEN, gpu=False, light_ver=LIGHT_VER, mode=args.mode)
     oracle.load()
     end_token, pad_token, max_seq_len, vocab_size = oracle.end_token, oracle.pad_token, oracle.max_seq_len, len(oracle.vocab) 
     max_seq_len += pb.model_params['gan']['pad'] 
 
     gen = Generator(pb.model_params['G']['ed'], pb.model_params['G']['hd'], word_emb,
                     end_token=end_token, pad_token=pad_token, max_seq_len=max_seq_len, gpu=False)
-    gen.load_state_dict(torch.load(pb.model_path('gen')))
+
+    if args.pretrained:
+        gen.load_state_dict(torch.load(pb.model_pretrain_path('gen')))
+    else:
+        gen.load_state_dict(torch.load(pb.model_path('gen')))
+
+    gen.eval()
+    gen.turn_off_grads()
 
     generate(gen, oracle)
