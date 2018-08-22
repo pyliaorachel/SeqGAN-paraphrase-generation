@@ -8,9 +8,18 @@ dependencies:
   - certifi=2018.8.13=py37_0
   - cffi=1.11.5=py37h9745a5d_0
   - cudatoolkit=9.0=h13b8566_0
+  - cycler=0.10.0=py37_0
+  - dbus=1.13.2=h714fa37_1
+  - expat=2.2.5=he0dffb1_0
+  - fontconfig=2.13.0=h9420a91_0
   - freetype=2.9.1=h8a8886c_0
+  - glib=2.56.1=h000015b_0
+  - gst-plugins-base=1.14.0=hbbd80ab_1
+  - gstreamer=1.14.0=hb453b48_1
+  - icu=58.2=h9c2bf20_1
   - intel-openmp=2018.0.3=0
   - jpeg=9b=h024ee3a_2
+  - kiwisolver=1.0.1=py37hf484d3e_0
   - libedit=3.1.20170329=h6b74fdf_2
   - libffi=3.2.1=hd88cf55_4
   - libgcc-ng=7.2.0=hdf63c60_3
@@ -18,6 +27,10 @@ dependencies:
   - libpng=1.6.34=hb9fc6fc_0
   - libstdcxx-ng=7.2.0=hdf63c60_3
   - libtiff=4.0.9=he85c1e1_1
+  - libuuid=1.0.3=h1bed415_2
+  - libxcb=1.13=h1bed415_1
+  - libxml2=2.9.8=h26e45fe_1
+  - matplotlib=2.2.3=py37hb69df0a_0
   - mkl=2018.0.3=1
   - mkl_fft=1.0.4=py37h4414c95_1
   - mkl_random=1.0.1=py37h4414c95_1
@@ -28,15 +41,23 @@ dependencies:
   - numpy-base=1.15.0=py37h3dfced4_0
   - olefile=0.45.1=py37_0
   - openssl=1.0.2p=h14c3975_0
+  - pcre=8.42=h439df22_0
   - pillow=5.2.0=py37heded4f4_0
   - pip=10.0.1=py37_0
   - pycparser=2.18=py37_1
+  - pyparsing=2.2.0=py37_1
+  - pyqt=5.9.2=py37h22d08a2_0
   - python=3.7.0=hc3d631a_0
+  - python-dateutil=2.7.3=py37_0
+  - pytz=2018.5=py37_0
+  - qt=5.9.6=h52aff34_0
   - readline=7.0=ha6073c6_4
   - setuptools=40.0.0=py37_0
+  - sip=4.19.8=py37hf484d3e_0
   - six=1.11.0=py37_1
   - sqlite=3.24.0=h84994c4_0
   - tk=8.6.7=hc745277_3
+  - tornado=5.1=py37h14c3975_0
   - wheel=0.31.1=py37_0
   - xz=5.2.4=h14c3975_4
   - zlib=1.2.11=ha838bed_2

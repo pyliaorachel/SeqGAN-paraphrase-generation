@@ -3,6 +3,8 @@ import os
 import re
 from collections import defaultdict
 
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 
 
