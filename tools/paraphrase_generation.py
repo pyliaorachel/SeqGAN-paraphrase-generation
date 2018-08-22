@@ -38,7 +38,7 @@ if __name__ == '__main__':
     pb = PathBuilder(path=args.model)
 
     word_emb = WordEmbeddings(pb.model_params['G']['ed'])
-    oracle = DataLoader(dataset_path, word_emb, TRAIN_SIZE, TEST_SIZE, end_token_str=END_TOKEN, pad_token_str=PAD_TOKEN, gpu=False, light_ver=LIGHT_VER, mode=args.mode)
+    oracle = DataLoader(dataset_path, word_emb, pb.train_size, pb.test_size, end_token_str=END_TOKEN, pad_token_str=PAD_TOKEN, gpu=False, light_ver=LIGHT_VER, mode=args.mode)
     oracle.load()
     end_token, pad_token, max_seq_len, vocab_size = oracle.end_token, oracle.pad_token, oracle.max_seq_len, len(oracle.vocab) 
     max_seq_len += pb.model_params['gan']['pad'] 
