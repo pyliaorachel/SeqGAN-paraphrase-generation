@@ -67,9 +67,13 @@ def evaluate(gen, oracle, output, no_score=False):
 
             # Calculate BLEU score
             if not no_score:
-                scores = n.compute_individual_metrics([pos_str], generated_str)
-                bleu = scores['Bleu_2']
-                meteor = scores['METEOR']
+                if len(generated_str) > 0:
+                    scores = n.compute_individual_metrics([pos_str], generated_str)
+                    bleu = scores['Bleu_2']
+                    meteor = scores['METEOR']
+                else:
+                    bleu = 0
+                    meteor = 0
 
                 total_bleu += bleu
                 total_meteor += meteor
