@@ -84,8 +84,6 @@ class Discriminator(nn.Module):
         out_cond = torch.tanh(out_cond)
         out_cond = self.dropout_linear_cond(out_cond)
 
-        #cond, cond_lens = cond[sort_idx_cond], cond_lens[sort_idx_cond]
-
         # Combine
         out = torch.cat([out, out_cond], dim=1) # batch_size x (hidden_dim * 2)
         out = self.hidden2out(out)              # batch_size x 1
