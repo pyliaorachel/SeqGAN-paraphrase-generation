@@ -1,0 +1,200 @@
+2018-08-22 11:02:45,974 : INFO : [G_MLE] epoch = 1, average_train_NLL = 35.1231
+2018-08-22 11:05:38,689 : INFO : [G_MLE] epoch = 2, average_train_NLL = 28.2889
+2018-08-22 11:08:26,893 : INFO : [G_MLE] epoch = 3, average_train_NLL = 26.5495
+2018-08-22 11:11:18,089 : INFO : [G_MLE] epoch = 4, average_train_NLL = 25.8444
+2018-08-22 11:14:07,012 : INFO : [G_MLE] epoch = 5, average_train_NLL = 24.9084
+2018-08-22 11:16:54,606 : INFO : [G_MLE] epoch = 6, average_train_NLL = 24.2859
+2018-08-22 11:19:51,313 : INFO : [G_MLE] epoch = 7, average_train_NLL = 24.9440
+2018-08-22 11:23:04,797 : INFO : [G_MLE] epoch = 8, average_train_NLL = 24.7804
+2018-08-22 11:27:08,891 : INFO : [G_MLE] epoch = 9, average_train_NLL = 25.2601
+2018-08-22 11:31:06,618 : INFO : [G_MLE] epoch = 10, average_train_NLL = 24.4857
+2018-08-22 11:34:37,385 : INFO : [G_MLE] epoch = 11, average_train_NLL = 24.2321
+2018-08-22 11:38:17,017 : INFO : [G_MLE] epoch = 12, average_train_NLL = 25.8695
+2018-08-22 11:42:12,075 : INFO : [G_MLE] epoch = 13, average_train_NLL = 25.7234
+2018-08-22 11:46:11,632 : INFO : [G_MLE] epoch = 14, average_train_NLL = 25.4869
+2018-08-22 11:50:21,024 : INFO : [G_MLE] epoch = 15, average_train_NLL = 25.1903
+2018-08-22 11:54:39,306 : INFO : [G_MLE] epoch = 16, average_train_NLL = 25.2259
+2018-08-22 11:58:42,881 : INFO : [G_MLE] epoch = 17, average_train_NLL = 26.9771
+2018-08-22 12:02:41,881 : INFO : [G_MLE] epoch = 18, average_train_NLL = 26.7515
+2018-08-22 12:06:55,699 : INFO : [G_MLE] epoch = 19, average_train_NLL = 26.6504
+2018-08-22 12:11:09,872 : INFO : [G_MLE] epoch = 20, average_train_NLL = 26.6736
+2018-08-22 12:15:08,745 : INFO : [G_MLE] epoch = 21, average_train_NLL = 27.1036
+2018-08-22 12:19:21,788 : INFO : [G_MLE] epoch = 22, average_train_NLL = 27.9154
+2018-08-22 12:23:05,892 : INFO : [G_MLE] epoch = 23, average_train_NLL = 27.8439
+2018-08-22 12:26:49,378 : INFO : [G_MLE] epoch = 24, average_train_NLL = 28.2185
+2018-08-22 12:30:42,004 : INFO : [G_MLE] epoch = 25, average_train_NLL = 27.6991
+2018-08-22 12:34:28,146 : INFO : [G_MLE] epoch = 26, average_train_NLL = 27.7818
+2018-08-22 12:38:22,127 : INFO : [G_MLE] epoch = 27, average_train_NLL = 28.3753
+2018-08-22 12:42:13,186 : INFO : [G_MLE] epoch = 28, average_train_NLL = 28.5320
+2018-08-22 12:46:00,478 : INFO : [G_MLE] epoch = 29, average_train_NLL = 35.1438
+2018-08-22 12:49:42,502 : INFO : [G_MLE] epoch = 30, average_train_NLL = 40.6113
+2018-08-22 12:53:17,409 : INFO : [G_MLE] epoch = 31, average_train_NLL = 37.2176
+2018-08-22 12:57:10,701 : INFO : [G_MLE] epoch = 32, average_train_NLL = 36.4691
+2018-08-22 13:00:49,023 : INFO : [G_MLE] epoch = 33, average_train_NLL = 34.5662
+2018-08-22 13:04:47,230 : INFO : [G_MLE] epoch = 34, average_train_NLL = 33.1821
+2018-08-22 13:08:33,308 : INFO : [G_MLE] epoch = 35, average_train_NLL = 32.0535
+2018-08-22 13:12:22,464 : INFO : [G_MLE] epoch = 36, average_train_NLL = 30.9987
+2018-08-22 13:16:12,567 : INFO : [G_MLE] epoch = 37, average_train_NLL = 33.3276
+2018-08-22 13:19:58,773 : INFO : [G_MLE] epoch = 38, average_train_NLL = 32.4576
+2018-08-22 13:23:45,788 : INFO : [G_MLE] epoch = 39, average_train_NLL = 31.3217
+2018-08-22 13:27:36,974 : INFO : [G_MLE] epoch = 40, average_train_NLL = 31.1528
+2018-08-22 13:31:03,673 : INFO : [G_MLE] epoch = 41, average_train_NLL = 30.8746
+2018-08-22 13:34:15,226 : INFO : [G_MLE] epoch = 42, average_train_NLL = 31.3153
+2018-08-22 13:37:27,001 : INFO : [G_MLE] epoch = 43, average_train_NLL = 31.4451
+2018-08-22 13:41:16,085 : INFO : [G_MLE] epoch = 44, average_train_NLL = 31.5560
+2018-08-22 13:45:10,912 : INFO : [G_MLE] epoch = 45, average_train_NLL = 31.1116
+2018-08-22 13:48:57,486 : INFO : [G_MLE] epoch = 46, average_train_NLL = 31.2498
+2018-08-22 13:52:48,160 : INFO : [G_MLE] epoch = 47, average_train_NLL = 36.6321
+2018-08-22 13:56:33,929 : INFO : [G_MLE] epoch = 48, average_train_NLL = 34.3632
+2018-08-22 13:59:38,957 : INFO : [G_MLE] epoch = 49, average_train_NLL = 32.8181
+2018-08-22 14:02:41,480 : INFO : [G_MLE] epoch = 50, average_train_NLL = 32.7125
+2018-08-22 14:07:10,585 : INFO : [D] iter = -1, step = 0, epoch = 1, average_loss = 0.6908, train_acc = 0.5274, val_acc = 0.5282
+2018-08-22 14:08:29,963 : INFO : [D] iter = -1, step = 0, epoch = 2, average_loss = 0.6853, train_acc = 0.5528, val_acc = 0.5301
+2018-08-22 14:09:44,209 : INFO : [D] iter = -1, step = 0, epoch = 3, average_loss = 0.6795, train_acc = 0.5674, val_acc = 0.5307
+2018-08-22 14:10:59,460 : INFO : [D] iter = -1, step = 0, epoch = 4, average_loss = 0.6672, train_acc = 0.5938, val_acc = 0.5292
+2018-08-22 14:12:19,068 : INFO : [D] iter = -1, step = 0, epoch = 5, average_loss = 0.6497, train_acc = 0.6188, val_acc = 0.5198
+2018-08-22 14:16:39,654 : INFO : [D] iter = -1, step = 1, epoch = 1, average_loss = 0.6921, train_acc = 0.5333, val_acc = 0.5389
+2018-08-22 14:18:04,169 : INFO : [D] iter = -1, step = 1, epoch = 2, average_loss = 0.6871, train_acc = 0.5451, val_acc = 0.5397
+2018-08-22 14:19:25,435 : INFO : [D] iter = -1, step = 1, epoch = 3, average_loss = 0.6855, train_acc = 0.5516, val_acc = 0.5418
+2018-08-22 14:20:46,254 : INFO : [D] iter = -1, step = 1, epoch = 4, average_loss = 0.6837, train_acc = 0.5547, val_acc = 0.5390
+2018-08-22 14:22:06,488 : INFO : [D] iter = -1, step = 1, epoch = 5, average_loss = 0.6809, train_acc = 0.5633, val_acc = 0.5320
+2018-08-22 14:26:19,116 : INFO : [D] iter = -1, step = 2, epoch = 1, average_loss = 0.6892, train_acc = 0.5382, val_acc = 0.5369
+2018-08-22 14:27:36,663 : INFO : [D] iter = -1, step = 2, epoch = 2, average_loss = 0.6869, train_acc = 0.5441, val_acc = 0.5368
+2018-08-22 14:28:54,043 : INFO : [D] iter = -1, step = 2, epoch = 3, average_loss = 0.6859, train_acc = 0.5478, val_acc = 0.5387
+2018-08-22 14:30:11,587 : INFO : [D] iter = -1, step = 2, epoch = 4, average_loss = 0.6851, train_acc = 0.5508, val_acc = 0.5377
+2018-08-22 14:31:27,229 : INFO : [D] iter = -1, step = 2, epoch = 5, average_loss = 0.6836, train_acc = 0.5543, val_acc = 0.5358
+2018-08-22 14:35:43,330 : INFO : [D] iter = -1, step = 3, epoch = 1, average_loss = 0.6875, train_acc = 0.5443, val_acc = 0.5370
+2018-08-22 14:36:56,551 : INFO : [D] iter = -1, step = 3, epoch = 2, average_loss = 0.6855, train_acc = 0.5530, val_acc = 0.5355
+2018-08-22 14:38:07,337 : INFO : [D] iter = -1, step = 3, epoch = 3, average_loss = 0.6846, train_acc = 0.5563, val_acc = 0.5371
+2018-08-22 14:39:17,769 : INFO : [D] iter = -1, step = 3, epoch = 4, average_loss = 0.6838, train_acc = 0.5571, val_acc = 0.5361
+2018-08-22 14:40:27,922 : INFO : [D] iter = -1, step = 3, epoch = 5, average_loss = 0.6826, train_acc = 0.5611, val_acc = 0.5339
+2018-08-22 14:44:35,922 : INFO : [D] iter = -1, step = 4, epoch = 1, average_loss = 0.6878, train_acc = 0.5448, val_acc = 0.5352
+2018-08-22 14:45:51,154 : INFO : [D] iter = -1, step = 4, epoch = 2, average_loss = 0.6862, train_acc = 0.5512, val_acc = 0.5349
+2018-08-22 14:47:06,151 : INFO : [D] iter = -1, step = 4, epoch = 3, average_loss = 0.6854, train_acc = 0.5520, val_acc = 0.5363
+2018-08-22 14:48:22,102 : INFO : [D] iter = -1, step = 4, epoch = 4, average_loss = 0.6848, train_acc = 0.5550, val_acc = 0.5375
+2018-08-22 14:49:37,959 : INFO : [D] iter = -1, step = 4, epoch = 5, average_loss = 0.6839, train_acc = 0.5581, val_acc = 0.5356
+2018-08-22 14:54:12,846 : INFO : [D] iter = -1, step = 5, epoch = 1, average_loss = 0.6875, train_acc = 0.5460, val_acc = 0.5384
+2018-08-22 14:56:08,324 : INFO : [D] iter = -1, step = 5, epoch = 2, average_loss = 0.6863, train_acc = 0.5494, val_acc = 0.5387
+2018-08-22 14:58:00,787 : INFO : [D] iter = -1, step = 5, epoch = 3, average_loss = 0.6855, train_acc = 0.5516, val_acc = 0.5386
+2018-08-22 14:59:53,851 : INFO : [D] iter = -1, step = 5, epoch = 4, average_loss = 0.6847, train_acc = 0.5543, val_acc = 0.5394
+2018-08-22 15:01:44,026 : INFO : [D] iter = -1, step = 5, epoch = 5, average_loss = 0.6838, train_acc = 0.5569, val_acc = 0.5379
+2018-08-22 15:06:30,372 : INFO : [D] iter = -1, step = 6, epoch = 1, average_loss = 0.6877, train_acc = 0.5441, val_acc = 0.5376
+2018-08-22 15:08:26,337 : INFO : [D] iter = -1, step = 6, epoch = 2, average_loss = 0.6863, train_acc = 0.5469, val_acc = 0.5354
+2018-08-22 15:10:20,991 : INFO : [D] iter = -1, step = 6, epoch = 3, average_loss = 0.6856, train_acc = 0.5497, val_acc = 0.5349
+2018-08-22 15:12:12,389 : INFO : [D] iter = -1, step = 6, epoch = 4, average_loss = 0.6849, train_acc = 0.5528, val_acc = 0.5357
+2018-08-22 15:14:07,946 : INFO : [D] iter = -1, step = 6, epoch = 5, average_loss = 0.6842, train_acc = 0.5543, val_acc = 0.5358
+2018-08-22 15:19:03,258 : INFO : [D] iter = -1, step = 7, epoch = 1, average_loss = 0.6867, train_acc = 0.5500, val_acc = 0.5337
+2018-08-22 15:20:56,108 : INFO : [D] iter = -1, step = 7, epoch = 2, average_loss = 0.6859, train_acc = 0.5516, val_acc = 0.5349
+2018-08-22 15:22:50,504 : INFO : [D] iter = -1, step = 7, epoch = 3, average_loss = 0.6850, train_acc = 0.5543, val_acc = 0.5373
+2018-08-22 15:24:40,896 : INFO : [D] iter = -1, step = 7, epoch = 4, average_loss = 0.6845, train_acc = 0.5549, val_acc = 0.5372
+2018-08-22 15:26:34,852 : INFO : [D] iter = -1, step = 7, epoch = 5, average_loss = 0.6837, train_acc = 0.5580, val_acc = 0.5385
+2018-08-22 15:31:18,801 : INFO : [D] iter = -1, step = 8, epoch = 1, average_loss = 0.6868, train_acc = 0.5488, val_acc = 0.5364
+2018-08-22 15:33:06,666 : INFO : [D] iter = -1, step = 8, epoch = 2, average_loss = 0.6858, train_acc = 0.5500, val_acc = 0.5375
+2018-08-22 15:35:02,360 : INFO : [D] iter = -1, step = 8, epoch = 3, average_loss = 0.6850, train_acc = 0.5526, val_acc = 0.5364
+2018-08-22 15:36:55,387 : INFO : [D] iter = -1, step = 8, epoch = 4, average_loss = 0.6844, train_acc = 0.5548, val_acc = 0.5369
+2018-08-22 15:38:49,853 : INFO : [D] iter = -1, step = 8, epoch = 5, average_loss = 0.6836, train_acc = 0.5578, val_acc = 0.5363
+2018-08-22 15:43:36,370 : INFO : [D] iter = -1, step = 9, epoch = 1, average_loss = 0.6873, train_acc = 0.5470, val_acc = 0.5350
+2018-08-22 15:45:34,725 : INFO : [D] iter = -1, step = 9, epoch = 2, average_loss = 0.6861, train_acc = 0.5489, val_acc = 0.5376
+2018-08-22 15:47:33,138 : INFO : [D] iter = -1, step = 9, epoch = 3, average_loss = 0.6854, train_acc = 0.5529, val_acc = 0.5379
+2018-08-22 15:49:26,865 : INFO : [D] iter = -1, step = 9, epoch = 4, average_loss = 0.6846, train_acc = 0.5532, val_acc = 0.5384
+2018-08-22 15:51:22,456 : INFO : [D] iter = -1, step = 9, epoch = 5, average_loss = 0.6839, train_acc = 0.5562, val_acc = 0.5380
+2018-08-22 15:51:35,831 : INFO : [G_PG] iter = 0, average_train_NLL = 23.3847
+2018-08-22 15:56:34,825 : INFO : [D] iter = 0, step = 0, epoch = 1, average_loss = 0.6878, train_acc = 0.5465, val_acc = 0.5394
+2018-08-22 15:58:27,600 : INFO : [D] iter = 0, step = 0, epoch = 2, average_loss = 0.6867, train_acc = 0.5505, val_acc = 0.5386
+2018-08-22 16:00:22,902 : INFO : [D] iter = 0, step = 0, epoch = 3, average_loss = 0.6860, train_acc = 0.5500, val_acc = 0.5380
+2018-08-22 16:04:59,989 : INFO : [D] iter = 0, step = 1, epoch = 1, average_loss = 0.6872, train_acc = 0.5440, val_acc = 0.5380
+2018-08-22 16:06:47,790 : INFO : [D] iter = 0, step = 1, epoch = 2, average_loss = 0.6865, train_acc = 0.5475, val_acc = 0.5394
+2018-08-22 16:08:45,037 : INFO : [D] iter = 0, step = 1, epoch = 3, average_loss = 0.6861, train_acc = 0.5484, val_acc = 0.5386
+2018-08-22 16:12:47,685 : INFO : [D] iter = 0, step = 2, epoch = 1, average_loss = 0.6871, train_acc = 0.5482, val_acc = 0.5388
+2018-08-22 16:14:38,192 : INFO : [D] iter = 0, step = 2, epoch = 2, average_loss = 0.6865, train_acc = 0.5493, val_acc = 0.5385
+2018-08-22 16:16:29,095 : INFO : [D] iter = 0, step = 2, epoch = 3, average_loss = 0.6859, train_acc = 0.5515, val_acc = 0.5407
+2018-08-22 16:16:39,660 : INFO : [G_PG] iter = 1, average_train_NLL = 20.4791
+2018-08-22 16:22:06,203 : INFO : [D] iter = 1, step = 0, epoch = 1, average_loss = 0.6861, train_acc = 0.5499, val_acc = 0.5476
+2018-08-22 16:24:06,341 : INFO : [D] iter = 1, step = 0, epoch = 2, average_loss = 0.6856, train_acc = 0.5533, val_acc = 0.5488
+2018-08-22 16:26:01,470 : INFO : [D] iter = 1, step = 0, epoch = 3, average_loss = 0.6852, train_acc = 0.5532, val_acc = 0.5505
+2018-08-22 16:30:34,520 : INFO : [D] iter = 1, step = 1, epoch = 1, average_loss = 0.6868, train_acc = 0.5486, val_acc = 0.5482
+2018-08-22 16:32:27,316 : INFO : [D] iter = 1, step = 1, epoch = 2, average_loss = 0.6863, train_acc = 0.5507, val_acc = 0.5482
+2018-08-22 16:34:18,317 : INFO : [D] iter = 1, step = 1, epoch = 3, average_loss = 0.6857, train_acc = 0.5520, val_acc = 0.5469
+2018-08-22 16:39:39,751 : INFO : [D] iter = 1, step = 2, epoch = 1, average_loss = 0.6870, train_acc = 0.5451, val_acc = 0.5491
+2018-08-22 16:41:06,807 : INFO : [D] iter = 1, step = 2, epoch = 2, average_loss = 0.6867, train_acc = 0.5448, val_acc = 0.5498
+2018-08-22 16:42:51,103 : INFO : [D] iter = 1, step = 2, epoch = 3, average_loss = 0.6864, train_acc = 0.5477, val_acc = 0.5496
+2018-08-22 16:43:01,755 : INFO : [G_PG] iter = 2, average_train_NLL = 21.2007
+2018-08-22 16:48:23,162 : INFO : [D] iter = 2, step = 0, epoch = 1, average_loss = 0.6867, train_acc = 0.5468, val_acc = 0.5408
+2018-08-22 16:50:02,181 : INFO : [D] iter = 2, step = 0, epoch = 2, average_loss = 0.6864, train_acc = 0.5503, val_acc = 0.5408
+2018-08-22 16:51:38,007 : INFO : [D] iter = 2, step = 0, epoch = 3, average_loss = 0.6861, train_acc = 0.5504, val_acc = 0.5408
+2018-08-22 16:56:59,684 : INFO : [D] iter = 2, step = 1, epoch = 1, average_loss = 0.6873, train_acc = 0.5452, val_acc = 0.5435
+2018-08-22 16:58:40,106 : INFO : [D] iter = 2, step = 1, epoch = 2, average_loss = 0.6870, train_acc = 0.5461, val_acc = 0.5414
+2018-08-22 17:00:22,746 : INFO : [D] iter = 2, step = 1, epoch = 3, average_loss = 0.6867, train_acc = 0.5473, val_acc = 0.5426
+2018-08-22 17:05:40,405 : INFO : [D] iter = 2, step = 2, epoch = 1, average_loss = 0.6870, train_acc = 0.5450, val_acc = 0.5436
+2018-08-22 17:07:19,885 : INFO : [D] iter = 2, step = 2, epoch = 2, average_loss = 0.6865, train_acc = 0.5475, val_acc = 0.5447
+2018-08-22 17:09:02,773 : INFO : [D] iter = 2, step = 2, epoch = 3, average_loss = 0.6862, train_acc = 0.5477, val_acc = 0.5446
+2018-08-22 17:09:18,142 : INFO : [G_PG] iter = 3, average_train_NLL = 27.7863
+2018-08-22 17:15:32,573 : INFO : [D] iter = 3, step = 0, epoch = 1, average_loss = 0.6867, train_acc = 0.5469, val_acc = 0.5585
+2018-08-22 17:17:16,450 : INFO : [D] iter = 3, step = 0, epoch = 2, average_loss = 0.6861, train_acc = 0.5467, val_acc = 0.5605
+2018-08-22 17:19:03,648 : INFO : [D] iter = 3, step = 0, epoch = 3, average_loss = 0.6855, train_acc = 0.5495, val_acc = 0.5591
+2018-08-22 17:24:13,609 : INFO : [D] iter = 3, step = 1, epoch = 1, average_loss = 0.6868, train_acc = 0.5483, val_acc = 0.5600
+2018-08-22 17:26:06,642 : INFO : [D] iter = 3, step = 1, epoch = 2, average_loss = 0.6862, train_acc = 0.5500, val_acc = 0.5600
+2018-08-22 17:27:59,528 : INFO : [D] iter = 3, step = 1, epoch = 3, average_loss = 0.6861, train_acc = 0.5497, val_acc = 0.5602
+2018-08-22 17:33:42,316 : INFO : [D] iter = 3, step = 2, epoch = 1, average_loss = 0.6863, train_acc = 0.5505, val_acc = 0.5620
+2018-08-22 17:35:32,330 : INFO : [D] iter = 3, step = 2, epoch = 2, average_loss = 0.6860, train_acc = 0.5509, val_acc = 0.5622
+2018-08-22 17:37:24,568 : INFO : [D] iter = 3, step = 2, epoch = 3, average_loss = 0.6858, train_acc = 0.5521, val_acc = 0.5596
+2018-08-22 17:37:39,122 : INFO : [G_PG] iter = 4, average_train_NLL = 24.1607
+2018-08-22 17:44:40,492 : INFO : [D] iter = 4, step = 0, epoch = 1, average_loss = 0.6868, train_acc = 0.5482, val_acc = 0.5471
+2018-08-22 17:46:35,412 : INFO : [D] iter = 4, step = 0, epoch = 2, average_loss = 0.6864, train_acc = 0.5493, val_acc = 0.5453
+2018-08-22 17:48:47,158 : INFO : [D] iter = 4, step = 0, epoch = 3, average_loss = 0.6861, train_acc = 0.5497, val_acc = 0.5457
+2018-08-22 17:54:17,774 : INFO : [D] iter = 4, step = 1, epoch = 1, average_loss = 0.6872, train_acc = 0.5463, val_acc = 0.5460
+2018-08-22 17:56:18,482 : INFO : [D] iter = 4, step = 1, epoch = 2, average_loss = 0.6868, train_acc = 0.5481, val_acc = 0.5470
+2018-08-22 17:58:28,741 : INFO : [D] iter = 4, step = 1, epoch = 3, average_loss = 0.6865, train_acc = 0.5494, val_acc = 0.5454
+2018-08-22 18:04:05,827 : INFO : [D] iter = 4, step = 2, epoch = 1, average_loss = 0.6861, train_acc = 0.5479, val_acc = 0.5456
+2018-08-22 18:06:12,701 : INFO : [D] iter = 4, step = 2, epoch = 2, average_loss = 0.6856, train_acc = 0.5502, val_acc = 0.5498
+2018-08-22 18:08:18,379 : INFO : [D] iter = 4, step = 2, epoch = 3, average_loss = 0.6853, train_acc = 0.5504, val_acc = 0.5506
+2018-08-22 18:08:33,644 : INFO : [G_PG] iter = 5, average_train_NLL = 28.3591
+2018-08-22 18:14:35,182 : INFO : [D] iter = 5, step = 0, epoch = 1, average_loss = 0.6862, train_acc = 0.5496, val_acc = 0.5500
+2018-08-22 18:16:48,923 : INFO : [D] iter = 5, step = 0, epoch = 2, average_loss = 0.6856, train_acc = 0.5502, val_acc = 0.5492
+2018-08-22 18:19:02,479 : INFO : [D] iter = 5, step = 0, epoch = 3, average_loss = 0.6854, train_acc = 0.5504, val_acc = 0.5482
+2018-08-22 18:24:26,100 : INFO : [D] iter = 5, step = 1, epoch = 1, average_loss = 0.6880, train_acc = 0.5438, val_acc = 0.5504
+2018-08-22 18:26:40,195 : INFO : [D] iter = 5, step = 1, epoch = 2, average_loss = 0.6876, train_acc = 0.5451, val_acc = 0.5515
+2018-08-22 18:28:54,439 : INFO : [D] iter = 5, step = 1, epoch = 3, average_loss = 0.6871, train_acc = 0.5459, val_acc = 0.5494
+2018-08-22 18:34:55,713 : INFO : [D] iter = 5, step = 2, epoch = 1, average_loss = 0.6868, train_acc = 0.5502, val_acc = 0.5529
+2018-08-22 18:37:07,717 : INFO : [D] iter = 5, step = 2, epoch = 2, average_loss = 0.6865, train_acc = 0.5504, val_acc = 0.5521
+2018-08-22 18:39:19,353 : INFO : [D] iter = 5, step = 2, epoch = 3, average_loss = 0.6862, train_acc = 0.5507, val_acc = 0.5513
+2018-08-22 18:39:34,076 : INFO : [G_PG] iter = 6, average_train_NLL = 24.6102
+2018-08-22 18:46:33,981 : INFO : [D] iter = 6, step = 0, epoch = 1, average_loss = 0.6866, train_acc = 0.5490, val_acc = 0.5515
+2018-08-22 18:48:50,998 : INFO : [D] iter = 6, step = 0, epoch = 2, average_loss = 0.6860, train_acc = 0.5517, val_acc = 0.5528
+2018-08-22 18:51:06,300 : INFO : [D] iter = 6, step = 0, epoch = 3, average_loss = 0.6856, train_acc = 0.5530, val_acc = 0.5528
+2018-08-22 18:56:51,115 : INFO : [D] iter = 6, step = 1, epoch = 1, average_loss = 0.6866, train_acc = 0.5487, val_acc = 0.5470
+2018-08-22 18:59:03,045 : INFO : [D] iter = 6, step = 1, epoch = 2, average_loss = 0.6861, train_acc = 0.5482, val_acc = 0.5465
+2018-08-22 19:01:17,719 : INFO : [D] iter = 6, step = 1, epoch = 3, average_loss = 0.6859, train_acc = 0.5495, val_acc = 0.5460
+2018-08-22 19:06:55,179 : INFO : [D] iter = 6, step = 2, epoch = 1, average_loss = 0.6867, train_acc = 0.5485, val_acc = 0.5523
+2018-08-22 19:09:11,162 : INFO : [D] iter = 6, step = 2, epoch = 2, average_loss = 0.6861, train_acc = 0.5499, val_acc = 0.5505
+2018-08-22 19:11:27,893 : INFO : [D] iter = 6, step = 2, epoch = 3, average_loss = 0.6857, train_acc = 0.5508, val_acc = 0.5511
+2018-08-22 19:11:42,197 : INFO : [G_PG] iter = 7, average_train_NLL = 28.6326
+2018-08-22 19:18:51,060 : INFO : [D] iter = 7, step = 0, epoch = 1, average_loss = 0.6870, train_acc = 0.5488, val_acc = 0.5450
+2018-08-22 19:21:10,582 : INFO : [D] iter = 7, step = 0, epoch = 2, average_loss = 0.6865, train_acc = 0.5515, val_acc = 0.5451
+2018-08-22 19:23:29,588 : INFO : [D] iter = 7, step = 0, epoch = 3, average_loss = 0.6862, train_acc = 0.5509, val_acc = 0.5448
+2018-08-22 19:29:09,664 : INFO : [D] iter = 7, step = 1, epoch = 1, average_loss = 0.6862, train_acc = 0.5496, val_acc = 0.5419
+2018-08-22 19:31:22,845 : INFO : [D] iter = 7, step = 1, epoch = 2, average_loss = 0.6858, train_acc = 0.5505, val_acc = 0.5425
+2018-08-22 19:33:39,019 : INFO : [D] iter = 7, step = 1, epoch = 3, average_loss = 0.6853, train_acc = 0.5513, val_acc = 0.5443
+2018-08-22 19:39:20,307 : INFO : [D] iter = 7, step = 2, epoch = 1, average_loss = 0.6855, train_acc = 0.5530, val_acc = 0.5456
+2018-08-22 19:41:36,447 : INFO : [D] iter = 7, step = 2, epoch = 2, average_loss = 0.6850, train_acc = 0.5534, val_acc = 0.5448
+2018-08-22 19:44:00,129 : INFO : [D] iter = 7, step = 2, epoch = 3, average_loss = 0.6847, train_acc = 0.5554, val_acc = 0.5446
+2018-08-22 19:44:15,828 : INFO : [G_PG] iter = 8, average_train_NLL = 25.2458
+2018-08-22 19:51:12,174 : INFO : [D] iter = 8, step = 0, epoch = 1, average_loss = 0.6866, train_acc = 0.5487, val_acc = 0.5479
+2018-08-22 19:53:26,411 : INFO : [D] iter = 8, step = 0, epoch = 2, average_loss = 0.6860, train_acc = 0.5497, val_acc = 0.5488
+2018-08-22 19:55:40,329 : INFO : [D] iter = 8, step = 0, epoch = 3, average_loss = 0.6858, train_acc = 0.5498, val_acc = 0.5465
+2018-08-22 20:01:15,691 : INFO : [D] iter = 8, step = 1, epoch = 1, average_loss = 0.6855, train_acc = 0.5548, val_acc = 0.5445
+2018-08-22 20:03:37,794 : INFO : [D] iter = 8, step = 1, epoch = 2, average_loss = 0.6851, train_acc = 0.5528, val_acc = 0.5465
+2018-08-22 20:05:55,690 : INFO : [D] iter = 8, step = 1, epoch = 3, average_loss = 0.6846, train_acc = 0.5546, val_acc = 0.5459
+2018-08-22 20:11:29,407 : INFO : [D] iter = 8, step = 2, epoch = 1, average_loss = 0.6855, train_acc = 0.5533, val_acc = 0.5482
+2018-08-22 20:13:47,626 : INFO : [D] iter = 8, step = 2, epoch = 2, average_loss = 0.6851, train_acc = 0.5545, val_acc = 0.5472
+2018-08-22 20:16:03,216 : INFO : [D] iter = 8, step = 2, epoch = 3, average_loss = 0.6847, train_acc = 0.5551, val_acc = 0.5476
+2018-08-22 20:16:17,290 : INFO : [G_PG] iter = 9, average_train_NLL = 21.8174
+2018-08-22 20:22:40,723 : INFO : [D] iter = 9, step = 0, epoch = 1, average_loss = 0.6871, train_acc = 0.5465, val_acc = 0.5536
+2018-08-22 20:24:58,450 : INFO : [D] iter = 9, step = 0, epoch = 2, average_loss = 0.6865, train_acc = 0.5491, val_acc = 0.5545
+2018-08-22 20:27:16,873 : INFO : [D] iter = 9, step = 0, epoch = 3, average_loss = 0.6862, train_acc = 0.5477, val_acc = 0.5545
+2018-08-22 20:33:20,623 : INFO : [D] iter = 9, step = 1, epoch = 1, average_loss = 0.6857, train_acc = 0.5518, val_acc = 0.5528
+2018-08-22 20:35:27,115 : INFO : [D] iter = 9, step = 1, epoch = 2, average_loss = 0.6850, train_acc = 0.5553, val_acc = 0.5531
+2018-08-22 20:37:36,941 : INFO : [D] iter = 9, step = 1, epoch = 3, average_loss = 0.6846, train_acc = 0.5564, val_acc = 0.5538
+2018-08-22 20:43:07,011 : INFO : [D] iter = 9, step = 2, epoch = 1, average_loss = 0.6867, train_acc = 0.5463, val_acc = 0.5527
+2018-08-22 20:45:15,438 : INFO : [D] iter = 9, step = 2, epoch = 2, average_loss = 0.6863, train_acc = 0.5461, val_acc = 0.5514
+2018-08-22 20:47:22,408 : INFO : [D] iter = 9, step = 2, epoch = 3, average_loss = 0.6859, train_acc = 0.5482, val_acc = 0.5516
