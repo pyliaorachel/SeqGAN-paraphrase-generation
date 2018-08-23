@@ -50,6 +50,8 @@ with open(args.filename) as f:
             print('.', end='')
             sys.stdout.flush()
 
+    print('\nFinished.')
+
 # Save
 with open(args.output, 'wb') as fout:
     np.save(fout, vectors)
