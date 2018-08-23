@@ -44,10 +44,11 @@ class PathBuilder:
     def model_pretrain_path(self, model_name):
         return os.path.join(self.model_pretrain_path_prefix, dotjoin([model_name, self.model_file_suffix]))
 
-    def model_eval_output_path(self, pretrain=False):
+    def model_eval_output_path(self, pretrain=False, no_score=False):
         model_path_prefix = self.model_path_prefix if not pretrain else self.model_pretrain_path_prefix
         model_path_suffix = os.path.normpath(model_path_prefix).split(os.sep)[1:]
-        return os.path.join('output', *model_path_suffix, 'results.tsv')
+        filename = 'results.tsv' if not no_score else 'results_raw.tsv'
+        return os.path.join('output', *model_path_suffix, filename)
 
     def increment_training_params(self, training_params, pretrain=False):
         for model, params in training_params.items():

@@ -19,6 +19,8 @@ def parse_args():
                         help='model file path')
     parser.add_argument('--pretrained', dest='pretrained', action='store_true',
                         help='use pretrained generator')
+    parser.add_argument('--no-score', dest='no_score', action='store_true',
+                        help='disable standard metric evaluation')
     parser.add_argument('--mode', type=str, choices={'test', 'train'}, metavar='mode', default='test',
                         help='generate on train or test set (default: test)')
     return parser.parse_args()
@@ -30,18 +32,23 @@ def tensor_to_sent(t, oracle):
     sent = sent.replace(oracle.end_token_str, '').strip()
     return sent
 
-def evaluate(gen, oracle, output):
-    n = NLGEval()
+def evaluate(gen, oracle, output, no_score=False):
+    if not no_score:
+        n = NLGEval()
 
     print('Start evaluation...')
     total_samples = oracle.test_size
 
     with open(output, 'w') as fout:
         writer = csv.writer(fout, delimiter='\t')
-        writer.writerow(['original (cond)', 'sample (pos)', 'generated (neg)', 'BLEU', 'METEOR'])
 
-        total_bleu = 0
-        total_meteor = 0
+        if not no_score:
+            writer.writerow(['original (cond)', 'sample (pos)', 'generated (neg)', 'BLEU', 'METEOR'])
+            total_bleu = 0
+            total_meteor = 0
+        else:
+            writer.writerow(['original (cond)', 'sample (pos)', 'generated (neg)'])
+
         i = 0
         end_of_dataset = False
         while not end_of_dataset:
@@ -59,24 +66,29 @@ def evaluate(gen, oracle, output):
             generated_str = tensor_to_sent(generated, oracle)
 
             # Calculate BLEU score
-            scores = n.compute_individual_metrics([pos_str], generated_str)
-            bleu = scores['Bleu_2']
-            meteor = scores['METEOR']
+            if not no_score:
+                scores = n.compute_individual_metrics([pos_str], generated_str)
+                bleu = scores['Bleu_2']
+                meteor = scores['METEOR']
 
-            total_bleu += bleu
-            total_meteor += meteor
+                total_bleu += bleu
+                total_meteor += meteor
 
             # Output to tsv file
-            writer.writerow([cond_str, pos_str, generated_str, bleu, meteor])
+            if not no_score:
+                writer.writerow([cond_str, pos_str, generated_str, bleu, meteor])
+            else:
+                writer.writerow([cond_str, pos_str, generated_str])
 
             i += 1
             if i % int(total_samples / 5) == 0: # Print progress every 5%
                 print('.', end='')
                 sys.stdout.flush()
 
-        avg_bleu = total_bleu / i
-        avg_meteor = total_meteor / i
-        print('Average BLEU score: {avg_bleu}\tAverage METEOR score: {avg_meteor}')
+        if not no_score:
+            avg_bleu = total_bleu / i
+            avg_meteor = total_meteor / i
+            print('Average BLEU score: {avg_bleu}\tAverage METEOR score: {avg_meteor}')
 
 if __name__ == '__main__':
     args = parse_args()
@@ -100,7 +112,7 @@ if __name__ == '__main__':
     gen.eval()
     gen.turn_off_grads()
 
-    output = pb.model_eval_output_path(pretrain=args.pretrained)
+    output = pb.model_eval_output_path(pretrain=args.pretrained, no_score=args.no_score)
     pb.ensure(output)
 
-    evaluate(gen, oracle, output)
+    evaluate(gen, oracle, output, args.no_score)
