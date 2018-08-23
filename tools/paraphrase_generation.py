@@ -1,12 +1,14 @@
 import argparse
 
 import torch
+import nltk
 
 from src.generator import Generator
 from src.utils.word_embeddings import WordEmbeddings
 from src.utils.dataloader import DataLoader
 from src.utils.pathbuilder import PathBuilder
 from src.utils.static_params import *
+from .evaluate import tensor_to_sent
 
 
 def parse_args():
@@ -22,12 +24,11 @@ def parse_args():
 def generate(gen, oracle):
     cond_str = input('Input a sentence (or \'q\' to exit): ')
     while cond_str != 'q':
-        cond = torch.LongTensor(oracle.sent_to_ints(cond_str))
+        cond_tokens = nltk.word_tokenize(cond_str.lower()) + [oracle.end_token_str]
+        cond = torch.LongTensor(oracle.sent_to_ints(cond_tokens))
 
-        result = gen.sample_until_end(cond, max_len=100).numpy()
-        result = [x for x in result if x != gen.pad_token]
-        result_str = oracle.ints_to_sent(result)
-        result_str = result_str.replace(oracle.end_token_str, '').strip()
+        result = gen.sample_until_end(cond, max_len=100)
+        result_str = tensor_to_sent(result, oracle)
 
         print(result_str)
 
