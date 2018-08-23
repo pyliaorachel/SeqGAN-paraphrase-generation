@@ -18,6 +18,9 @@ $ source activate <env-name>                         # enter virtual env
 ## OR other methods, e.g.
 $ pip3 install -r requirements.txt
 
+# Install nlg-eval (for evaluation only)
+Follow instructions here: https://github.com/Maluuba/nlg-eval
+
 # Parse pretrained word embeddings (currently only GloVe is supported)
 $ python3 tools/parse_emb.py <word-embedding-file> <output-vector-file> <output-info-file>
 ## Vector file: *.npy, which keeps a numpy array
