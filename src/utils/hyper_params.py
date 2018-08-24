@@ -17,7 +17,7 @@ ADV_TRAIN_ITERS = 1 if DEBUG else 10
 
 # Embedding dim must be one of those in pretrained word embeddings: 25, 50, 100, 200
 ED = 50 # embedding dim
-G_HD = 32 # hidden dim
+G_HD = 64 # hidden dim
 D_HD = 64
 
 pretrained_emb_path_prefix = f'./dataset/pretrained_word_embeddings/glove_{ED}'
