@@ -21,30 +21,29 @@ class Discriminator(nn.Module):
         self.end_token = end_token
         self.pad_token = pad_token
 
-        # Inp
+        # Inp & cond matcher: CNN
+        # Settings similar to https://github.com/faneshion/MatchZoo/blob/master/matchzoo/models/matchpyramid.py
+        IN_CHANNELS, OUT_CHANNELS, KERNEL_SIZE, POOL_H, POOL_W = 1, 32, 3, 3, 10
+        self.conv2d = nn.Conv2d(IN_CHANNELS, OUT_CHANNELS, KERNEL_SIZE)
+        self.dpool = nn.AdaptiveMaxPool2d((POOL_H, POOL_W))
+        self.flatten2out = nn.Linear(OUT_CHANNELS * POOL_H * POOL_W, 1)
+
+        # Inp encoder for genuineness
         self.gru = nn.GRU(embedding_dim, hidden_dim, num_layers=2, bidirectional=True, dropout=dropout, batch_first=True)
         self.gru2hidden = nn.Linear(2 * 2 * hidden_dim, hidden_dim)
         self.dropout_linear = nn.Dropout(p=dropout)
-
-        # Condition
-        self.gru_cond = nn.GRU(embedding_dim, hidden_dim, num_layers=2, bidirectional=True, dropout=dropout, batch_first=True)
-        self.gru2hidden_cond = nn.Linear(2 * 2 * hidden_dim, hidden_dim)
-        self.dropout_linear_cond = nn.Dropout(p=dropout)
+        self.hidden2out = nn.Linear(hidden_dim, 1)
 
         # Shared
         self.embeddings = self.init_emb()
-        self.hidden2out = nn.Linear(hidden_dim * 2, 1)
 
         if gpu:
             self.cuda()
 
     def init_emb(self, trainable=True):
-        emb_layer = nn.Embedding(self.word_emb.vocab_size, self.embedding_dim)
-        emb_layer.load_state_dict({ 'weight': self.word_emb.emb })
-
-        if not trainable:
-            emb_layer.weight.requires_grad = False
-
+        emb_layer = nn.Embedding.from_pretrained(self.word_emb.emb, freeze=(not trainable))
+        emb_layer.padding_idx = self.pad_token
+        emb_layer.weight.data[self.pad_token].fill_(0)
         return emb_layer
 
     def init_hidden(self, batch_size):
@@ -60,40 +59,40 @@ class Discriminator(nn.Module):
             - inp_lens, cond_lens: batch_size
             - hidden, hidden_cond: 4 x batch_size x hidden_dim
         """
-        # Inp
-        inp, inp_lens, sort_idx = helpers.sort_sample_by_len(inp, inp_lens)      # sort
+        batch_size = inp.shape[0]
 
-        inp = self.embeddings(inp)                                               # batch_size x seq_len x embedding_dim
+        # Inp & cond embedding matrix
+        inp_m = self.embeddings(inp)                        # batch_size x inp_seq_len x embedding_dim
+        cond_m = self.embeddings(cond)                      # batch_size x cond_seq_len x embedding_dim
 
+        # Matching
+        cross = torch.bmm(inp_m, cond_m.permute(0, 2, 1))   # batch_size x inp_seq_len x cond_seq_len
+        cross = cross.unsqueeze(1)                          # batch_size x in_channels x inp_seq_len x cond_seq_len
+
+        out = self.conv2d(cross)                            # batch_size x out_channels x out_h x out_w
+        out = F.relu(out)
+
+        out = self.dpool(out)                               # batch_size x out_channels x pool_h x pool_w
+        out = out.view(batch_size, -1)                      # batch_size x (out_channels * pool_h * pool_w)
+        match = self.flatten2out(out)                       # batch_size x 1
+        match = torch.sigmoid(match)
+
+        # Inp genuineness
+        inp, inp_lens, sort_idx = helpers.sort_sample_by_len(inp, inp_lens)     # sort
+
+        inp = self.embeddings(inp)                                              # batch_size x seq_len x embedding_dim
         inp = nn.utils.rnn.pack_padded_sequence(inp, inp_lens, batch_first=True)
-        _, hidden = self.gru(inp, hidden)                                        # 4 x batch_size x hidden_dim
+        _, hidden = self.gru(inp, hidden)                                       # 4 x batch_size x hidden_dim
 
-        out = self.gru2hidden(hidden.view(-1, 4 * self.hidden_dim))              # batch_size x (4 * hidden_dim)
+        out = self.gru2hidden(hidden.view(-1, 4 * self.hidden_dim))             # batch_size x hidden_dim
         out = torch.tanh(out)
         out = self.dropout_linear(out)
+        out = self.hidden2out(out)                                              # batch_size x 1
 
-        out = out[sort_idx] # unsort to original ordering
+        genuine = out[sort_idx] # unsort to original ordering
+        genuine = torch.sigmoid(genuine)
 
-        # Cond
-        cond, cond_lens, sort_idx_cond = helpers.sort_sample_by_len(cond, cond_lens)
-
-        cond = self.embeddings(cond)
-
-        cond = nn.utils.rnn.pack_padded_sequence(cond, cond_lens, batch_first=True)
-        _, hidden_cond = self.gru_cond(cond, hidden_cond)
-
-        out_cond = self.gru2hidden_cond(hidden_cond.view(-1, 4 * self.hidden_dim))
-        out_cond = torch.tanh(out_cond)
-        out_cond = self.dropout_linear_cond(out_cond)
-
-        out_cond = out_cond[sort_idx_cond] # unsort to original ordering
-
-        # Combine
-        out = torch.cat([out, out_cond], dim=1) # batch_size x (hidden_dim * 2)
-        out = self.hidden2out(out)              # batch_size x 1
-        out = torch.sigmoid(out)
-        
-        return out
+        return (match + genuine) / 2
 
     def batchClassify(self, inp, inp_lens, cond, cond_lens):
         """
@@ -121,7 +120,7 @@ class Discriminator(nn.Module):
             - inp_lens, cond_lens: batch_size
             - target: batch_size (binary 1/0)
         """
-        out = self.batchClassify(inp, inp_lens, cond, cond_lens) 
+        out = self.batchClassify(inp, inp_lens, cond, cond_lens)
         acc = torch.sum((out > 0.5) == (target > 0.5)).data.item()
         loss = F.binary_cross_entropy(out, target)
         return loss, acc
