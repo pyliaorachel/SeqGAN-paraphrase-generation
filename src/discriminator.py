@@ -72,6 +72,8 @@ class Discriminator(nn.Module):
         out = torch.tanh(out)
         out = self.dropout_linear(out)
 
+        out = out[sort_idx] # unsort to original ordering
+
         # Cond
         cond, cond_lens, sort_idx_cond = helpers.sort_sample_by_len(cond, cond_lens)
 
@@ -83,6 +85,8 @@ class Discriminator(nn.Module):
         out_cond = self.gru2hidden_cond(hidden_cond.view(-1, 4 * self.hidden_dim))
         out_cond = torch.tanh(out_cond)
         out_cond = self.dropout_linear_cond(out_cond)
+
+        out_cond = out_cond[sort_idx_cond] # unsort to original ordering
 
         # Combine
         out = torch.cat([out, out_cond], dim=1) # batch_size x (hidden_dim * 2)
