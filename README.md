@@ -145,6 +145,7 @@ This is the first sentence. This sentence is the first one. This one is generate
 ├── environment.yml                   # conda env details
 ├── log                               # storing logs named by timestamp and hyperparameters
 ├── model                             # storing trained models
+├── plots                             # plots of log files, including accuracy & loss trends
 ├── README.md
 ├── requirements.txt                  # dependency details
 ├── src
@@ -161,6 +162,7 @@ This is the first sentence. This sentence is the first one. This one is generate
 │       └── word_embeddings.py        # word embedding helper class, load or initialize word embeddings
 └── tools
     ├── __init__.py
+    ├── evaluate.py                   # evaluation script, output generated paraphrases and evaluation scores
     ├── paraphrase_generation.py      # interactive script, generate paraphrase given a sentence
     ├── parse_emb.py                  # parse word embedding vectors and mappings from raw file
     └── visualize_log.py              # visualize loss, acc, etc. information in a given log file`
