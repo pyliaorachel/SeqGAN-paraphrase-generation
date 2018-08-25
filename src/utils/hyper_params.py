@@ -1,9 +1,9 @@
 from .static_params import *
 
 
-MAX_SEQ_LEN_PADDING = 10
+MAX_SEQ_LEN_PADDING = 10 # length limit for generated sequences = max length of all observed sequences in dataset + padding
 BATCH_SIZE = 16
-ROLLOUT_NUM = 3
+ROLLOUT_NUM = 3 # for Monte Carlo search
 TEACHER_FORCING_RATIO = 0.9
 TEACHER_FORCING_RATIO_DECR_STEP = 0.05
 TEACHER_FORCING_UPDATE_EP = 5
