@@ -16,7 +16,7 @@ from src.utils.static_params import *
 def parse_args():
     parser = argparse.ArgumentParser(description='Train GAN model')
     parser.add_argument('model', type=str, metavar='model',
-                        help='model file path')
+                        help='model directory path (must include until pretrain/*/)')
     parser.add_argument('--pretrained', dest='pretrained', action='store_true',
                         help='use pretrained generator')
     parser.add_argument('--no-score', dest='no_score', action='store_true',
