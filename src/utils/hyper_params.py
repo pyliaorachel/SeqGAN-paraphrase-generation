@@ -20,7 +20,8 @@ ED = 50 # embedding dim
 G_HD = 64 # hidden dim
 D_HD = 64
 
-pretrained_emb_path_prefix = f'./dataset/pretrained_word_embeddings/glove_{ED}'
+pretrained_emb = 'glove'
+pretrained_emb_path_prefix = f'./dataset/pretrained_word_embeddings/{pretrained_emb}_{ED}'
 
 model_params = { 'gan': { 'rn': ROLLOUT_NUM, 'tfr': TEACHER_FORCING_RATIO, 'tfrd': TEACHER_FORCING_RATIO_DECR_STEP, 'tfue': TEACHER_FORCING_UPDATE_EP, 'bs': BATCH_SIZE, 'pad': MAX_SEQ_LEN_PADDING },
                  'G': { 'ed': ED, 'hd': G_HD },
