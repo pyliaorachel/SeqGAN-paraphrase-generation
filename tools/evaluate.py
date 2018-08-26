@@ -92,7 +92,7 @@ def evaluate(gen, oracle, output, no_score=False):
         if not no_score:
             avg_bleu = total_bleu / i
             avg_meteor = total_meteor / i
-            print('Average BLEU score: {avg_bleu}\tAverage METEOR score: {avg_meteor}')
+            print(f'Average BLEU score: {avg_bleu}\tAverage METEOR score: {avg_meteor}')
 
 if __name__ == '__main__':
     args = parse_args()
