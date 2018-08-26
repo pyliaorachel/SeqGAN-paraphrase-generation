@@ -214,6 +214,9 @@ def train_discriminator(dis, dis_opt, gen, oracle, d_steps, epochs, adv_iter, sa
         if not NO_SAVE:
            torch.save(dis.state_dict(), save_path)
 
+    if not NO_SAVE:
+       torch.save(dis.state_dict(), save_path)
+
     # Release validation set
     oracle.release()
 
@@ -273,17 +276,18 @@ if __name__ == '__main__':
 
     print('\nStarting Adversarial Training...')
     for i in range(ADV_TRAIN_ITERS):
-        print(f'\n--------\nITERATION {i + 1}\n--------')
+        iteration = pb.training_params['gan']['iter'] + i if pb.has_trained_models else i
+        print(f'\n--------\nITERATION {iteration + 1}\n--------')
 
         '''Train generator'''
 
         print('\nAdversarial Training Generator : ', end='')
-        train_generator_PG(gen, gen_optimizer, dis, oracle, rollout, G_TRAIN_STEPS, i, pb.model_path('gen'))
+        train_generator_PG(gen, gen_optimizer, dis, oracle, rollout, G_TRAIN_STEPS, iteration, pb.model_path('gen'))
 
         '''Train discriminator'''
 
         print('\nAdversarial Training Discriminator : ')
-        train_discriminator(dis, dis_optimizer, gen, oracle, D_TRAIN_STEPS, D_TRAIN_EPOCHS, i, pb.model_path('dis'))
+        train_discriminator(dis, dis_optimizer, gen, oracle, D_TRAIN_STEPS, D_TRAIN_EPOCHS, iteration, pb.model_path('dis'))
 
         if not NO_SAVE and pb.has_trained_models:
             params = { 'gan': { 'iter': 1 } }
