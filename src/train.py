@@ -236,16 +236,17 @@ if __name__ == '__main__':
 
     word_emb = word_embeddings.WordEmbeddings(ED, pretrained_emb_path_prefix)
     oracle = dataloader.DataLoader(dataset_path, word_emb, train_size=TRAIN_SIZE, test_size=TEST_SIZE,
-                                   end_token_str=END_TOKEN, pad_token_str=PAD_TOKEN, gpu=CUDA, light_ver=LIGHT_VER)
+                                   start_token_str=START_TOKEN, end_token_str=END_TOKEN, pad_token_str=PAD_TOKEN,
+                                   gpu=CUDA, light_ver=LIGHT_VER)
     oracle.load()
-    end_token, pad_token, max_seq_len = oracle.end_token, oracle.pad_token, oracle.max_seq_len
+    start_token, end_token, pad_token, max_seq_len = oracle.start_token, oracle.end_token, oracle.pad_token, oracle.max_seq_len
     max_seq_len += MAX_SEQ_LEN_PADDING # give room for longer sequences
 
-    gen = generator.Generator(ED, G_HD, word_emb, end_token=end_token, pad_token=pad_token,
+    gen = generator.Generator(ED, G_HD, word_emb, start_token=start_token, end_token=end_token, pad_token=pad_token,
                               max_seq_len=max_seq_len, gpu=CUDA)
-    dis = discriminator.Discriminator(ED, D_HD, word_emb, end_token=end_token, pad_token=pad_token,
+    dis = discriminator.Discriminator(ED, D_HD, word_emb, start_token=start_token, end_token=end_token, pad_token=pad_token,
                                       max_seq_len=max_seq_len, gpu=CUDA)
-    rollout = generator.Generator(ED, G_HD, word_emb, end_token=end_token, pad_token=pad_token,
+    rollout = generator.Generator(ED, G_HD, word_emb, start_token=start_token, end_token=end_token, pad_token=pad_token,
                                   max_seq_len=max_seq_len, gpu=CUDA)
     rollout.turn_off_grads() # rollout does not need to be backpropagated
 

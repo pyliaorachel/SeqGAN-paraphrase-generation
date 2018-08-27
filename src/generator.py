@@ -10,7 +10,7 @@ from .utils import helpers
 
 
 class Generator(nn.Module):
-    def __init__(self, embedding_dim, hidden_dim, word_emb, max_seq_len=30, end_token=1, pad_token=0, gpu=False):
+    def __init__(self, embedding_dim, hidden_dim, word_emb, max_seq_len=30, start_token=2, end_token=1, pad_token=0, gpu=False):
         super().__init__()
 
         self.hidden_dim = hidden_dim
@@ -18,6 +18,7 @@ class Generator(nn.Module):
         self.max_seq_len = max_seq_len
         self.word_emb = word_emb
         self.gpu = gpu
+        self.start_token = start_token
         self.end_token = end_token
         self.pad_token = pad_token
 
@@ -56,6 +57,13 @@ class Generator(nn.Module):
         out = F.log_softmax(out, dim=1)
         return out, hidden
 
+    def start_token_tensor(self, batch_size, gpu=False):
+        """
+        Return start token as tensor with the specified batch size.
+        """
+        start_tokens = torch.ones(batch_size, 1).long() * self.start_token
+        return start_tokens.cuda() if gpu else start_tokens
+
     def sample(self, cond, gpu=False):
         """
         Samples the network, returns num_samples samples of length max_seq_len, wrapped in variables.
@@ -70,8 +78,8 @@ class Generator(nn.Module):
         num_samples = cond.shape[0]
 
         out, h = self.encode(cond, gpu=gpu)
-        out = self.sample_one(out).view(-1, 1)
-        samples, lens = self.continue_sample_N(out, 1, h, gpu=gpu)
+        start_tokens = self.start_token_tensor(num_samples, gpu=gpu)
+        samples, lens = self.continue_sample_N(start_tokens, 1, h, gpu=gpu)
         return samples.view((num_samples, -1)), lens.view(-1) # samples: remove second dimension used for N; lens: flatten
 
     def sample_until_end(self, cond, max_len):
@@ -85,13 +93,13 @@ class Generator(nn.Module):
         """
         cond = cond.unsqueeze(0)
 
-        # Encode & generate first output
+        # Encode
         out, h = self.encode(cond)
-        out = self.sample_one(out).view(-1)
 
-        # Keep sampling until end token generated
+        # Keep sampling until end token generated, starting from start token
+        out = self.start_token_tensor(1).view(-1)
         sample = out
-        has_ended = out == self.end_token
+        has_ended = False
         l = 1
         while not has_ended and l < max_len:
             out, h = self.forward(out, h)
@@ -128,43 +136,34 @@ class Generator(nn.Module):
             samples = samples.cuda()
             inp = inp.cuda()
 
-        # If raw sequence is given, encode it first, init rollout stuffs correspondingly
-        if h is None: # not encoded, encode input which generates the first output
+        # If raw sequence is given, encode it first
+        if h is None:
             out, h = self.encode(inp, gpu=gpu)
-            out = self.sample_one(out)
 
-            more_samples = out.unsqueeze(0) # for keeping subsequence sequences, starting from last output 
-            l = sub_seq_len + 1             # already one output following the original subsequence
-            lens = torch.ones(n * batch_size).long() * (sub_seq_len + 1)        # init lengths
-            has_ended = torch.zeros(n * batch_size).byte()                      # which sequences has observed end token 
-            has_ended[out == self.end_token] = 1
-        else: # already encoded, take last input token as last output
-            out = inp[:, -1]
-
-            more_samples = torch.LongTensor()
-            l = sub_seq_len
-            lens = torch.ones(n * batch_size).long() * (sub_seq_len)
-            has_ended = torch.zeros(n * batch_size).byte()
+        # Init rollout stuffs
+        more_samples = torch.LongTensor()                      # for keeping subsequence sequences
+        l = sub_seq_len                                        # current length
+        lens = torch.ones(n * batch_size).long() * sub_seq_len # init lengths of all sequences
+        has_ended = torch.zeros(n * batch_size).byte()         # which sequences has observed end token
 
         # Monte Carlo search: continue sampling until the end for n times
         samples[:, :sub_seq_len] = inp.unsqueeze(1).repeat(1, 1, n).view(n * batch_size, -1) # copy inputs to samples
         h = h.unsqueeze(1).repeat(1, 1, 1, n).view(1, -1, self.hidden_dim)                   # repeat each hidden vec n times
-        out = out.unsqueeze(1).repeat(1, n).view(-1)                                         # repeat each last timestep n times
+        out = inp[:, -1].unsqueeze(1).repeat(1, n).view(-1)                                  # repeat each last timestep n times
 
         if gpu:
             has_ended = has_ended.cuda()
             lens = lens.cuda()
             more_samples = more_samples.cuda()
 
-        # TODO: add teacher forcing
         while not has_ended.all() and l < self.max_seq_len:             # end if all sequences ended, or exceeded max len
             out, h = self.forward(out, h)
             out = self.sample_one(out)
 
             out[has_ended] = self.pad_token                             # pad ended sequences
             more_samples = torch.cat([more_samples, out.unsqueeze(0)])  # append new samples
-            has_ended[out == self.end_token] = 1                        # update ended sequences
             lens[has_ended ^ 1] += 1                                    # update lengths of not-ended sequences
+            has_ended[out == self.end_token] = 1                        # update ended sequences
 
             l += 1
 
@@ -296,7 +295,7 @@ class Generator(nn.Module):
 
         # Decode to output, accumulate loss
         target = target.t()                         # target_seq_len x batch_size
-        loss = loss_fn(out, target[0])              # loss init to first output's loss
+        loss = 0
 
         # Scheduled sampling
         last_out = self.start_token_tensor(batch_size, gpu=gpu)
@@ -329,7 +328,7 @@ class Generator(nn.Module):
         target = target.t()     # seq_len x batch_size
         h = self.init_hidden(batch_size, gpu=gpu)
 
-        # Encode inp, get the first output
+        # Encode inp
         out, h = self.encode(inp, gpu=gpu) # out is log_softmax
 
         # Accumulate loss: log(P(y_t | Y_1:Y_{t-1})) * Q

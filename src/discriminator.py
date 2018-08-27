@@ -10,7 +10,7 @@ from .utils import helpers
 
 
 class Discriminator(nn.Module):
-    def __init__(self, embedding_dim, hidden_dim, word_emb, max_seq_len=30, end_token=1, pad_token=0, gpu=False, dropout=0.2):
+    def __init__(self, embedding_dim, hidden_dim, word_emb, max_seq_len=30, start_token=2, end_token=1, pad_token=0, gpu=False, dropout=0.2):
         super().__init__()
 
         self.hidden_dim = hidden_dim
@@ -18,6 +18,7 @@ class Discriminator(nn.Module):
         self.max_seq_len = max_seq_len
         self.word_emb = word_emb
         self.gpu = gpu
+        self.start_token = start_token
         self.end_token = end_token
         self.pad_token = pad_token
 
