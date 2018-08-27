@@ -228,9 +228,6 @@ if __name__ == '__main__':
     t = time.strftime('%Y-%m-%d_%H:%M:%S', time.localtime())
 
     args = parse_args()
-    pb = pathbuilder.PathBuilder(TRAIN_SIZE, TEST_SIZE, model_params, training_params, pretrain_params, no_save=NO_SAVE)
-    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO,
-                        filename=f'./log/{t}_{pb.whole_string()}.log')
 
     '''
     Create oracle data loader for pos examples, generator & discriminator for adversarial training, and rollout for MC search.
@@ -252,6 +249,11 @@ if __name__ == '__main__':
     rollout = generator.Generator(ED, G_HD, word_emb, start_token=start_token, end_token=end_token, pad_token=pad_token,
                                   max_seq_len=max_seq_len, gpu=CUDA)
     rollout.turn_off_grads() # rollout does not need to be backpropagated
+
+    # Create path info
+    pb = pathbuilder.PathBuilder(oracle.train_size, oracle.test_size, model_params, training_params, pretrain_params, no_save=NO_SAVE)
+    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO,
+                        filename=f'./log/{t}_{pb.whole_string()}.log')
 
     if pb.has_trained_models:
         gen.load_state_dict(torch.load(pb.model_path('gen')))
