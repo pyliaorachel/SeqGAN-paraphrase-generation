@@ -298,17 +298,14 @@ class Generator(nn.Module):
         target = target.t()                         # target_seq_len x batch_size
         loss = loss_fn(out, target[0])              # loss init to first output's loss
 
-        teacher_forcing = np.random.uniform() < teacher_forcing_ratio
-        if teacher_forcing: # feeds target as input to each decoder step
-            for i in range(1, target_seq_len):
-                out, h = self.forward(target[i-1], h)
-                loss += loss_fn(out, target[i])
-        else:               # feeds last output as input to each decoder step
-            last_out = self.sample_one(out) 
-            for i in range(1, target_seq_len):
-                out, h = self.forward(last_out, h)
-                loss += loss_fn(out, target[i])
-                last_out = self.sample_one(out) 
+        # Scheduled sampling
+        last_out = self.start_token_tensor(batch_size, gpu=gpu)
+        for i in range(1, target_seq_len):
+            out, h = self.forward(last_out, h)
+            loss += loss_fn(out, target[i])
+
+            teacher_forcing = np.random.uniform() < teacher_forcing_ratio
+            last_out = target[i] if teacher_forcing else self.sample_one(out)
 
         if self.gpu and not gpu:
             self.cuda()
