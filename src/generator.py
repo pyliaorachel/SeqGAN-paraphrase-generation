@@ -120,7 +120,7 @@ class Generator(nn.Module):
 
         Inputs:
             - inp: batch_size x sub_seq_len
-            - h: num_layers * num_directions, batch_size, hidden_dim
+            - h: num_layers * num_directions x batch_size x hidden_dim
 
         Outputs: samples, lens
             - samples: batch_size x n x max_seq_len
@@ -246,7 +246,7 @@ class Generator(nn.Module):
             - inp: batch_size x inp_seq_len
         Outputs: out, h
             - out: batch_size x vocab_size (output for last timestep)
-            - h: num_layers * num_directions, batch_size, hidden_dim
+            - h: num_layers * num_directions x batch_size x hidden_dim
         """
         if self.gpu and not gpu:
             self.cpu()
