@@ -66,7 +66,7 @@ def prepare_discriminator_data(oracle, gen, batch_size, is_val=False, on_cpu=Tru
         neg_samples[i:i+temp_batch_size, :temp_seq_len] = neg_samples_temp
         neg_lens[i:i+temp_batch_size] = neg_lens_temp
 
-    trim_trailing_paddings(neg_samples, neg_lens)
+    neg_samples = trim_trailing_paddings(neg_samples, neg_lens)
 
     if on_cpu: # put everything to cpu if needed after neg samples are generated
         pos_samples, pos_lens, cond_samples, cond_lens = pos_samples.cpu(), pos_lens.cpu(), cond_samples.cpu(), cond_lens.cpu()
