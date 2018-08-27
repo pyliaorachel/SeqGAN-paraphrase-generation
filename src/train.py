@@ -129,7 +129,10 @@ def train_generator_PG(gen, gen_opt, dis, oracle, rollout, g_steps, adv_iter, sa
         total_samples += len(target)
         i += 1
 
-    total_loss = total_loss / total_samples
+    if total_samples != 0:
+        total_loss = total_loss / total_samples
+    else:
+        total_loss = float('nan')
     logging.info(f'[G_PG] iter = {adv_iter}, average_train_NLL = {total_loss:.4f}')
 
     if not NO_SAVE:
