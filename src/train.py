@@ -276,7 +276,7 @@ if __name__ == '__main__':
 
     print('\nStarting Adversarial Training...')
     for i in range(ADV_TRAIN_ITERS):
-        iteration = pb.training_params['gan']['iter'] + i if pb.has_trained_models else i
+        iteration = pb.training_params['gan']['iter'] if pb.has_trained_models else i
         print(f'\n--------\nITERATION {iteration + 1}\n--------')
 
         '''Train generator'''
