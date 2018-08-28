@@ -378,6 +378,13 @@ class Generator(nn.Module):
         target = target.t()     # seq_len x batch_size
         h = self.init_hidden(batch_size, gpu=gpu)
 
+        # Rescale rewards: https://arxiv.org/pdf/1709.08624.pdf
+        _, sort_idx = torch.sort(rewards, dim=1, descending=True)
+        all_idx, _ = torch.sort(sort_idx, dim=1)
+        all_idx = all_idx.float() + 1
+        rankings = torch.zeros_like(rewards).scatter_(-1, sort_idx, all_idx)
+        rewards = torch.sigmoid(12.0 * (0.5 - rankings / batch_size))
+
         # Encode inp
         out, h, context = self.encode(inp, gpu=gpu) # out is log_softmax
 
