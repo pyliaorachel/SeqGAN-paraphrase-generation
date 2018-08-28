@@ -29,7 +29,7 @@ def tensor_to_sent(t, oracle):
     ints = t.numpy()
     ints = [x for x in ints if x != oracle.pad_token]
     sent = oracle.ints_to_sent(ints)
-    sent = sent.replace(oracle.end_token_str, '').strip()
+    sent = sent.replace(oracle.end_token_str, '').replace(oracle.start_token_str, '').strip()
     return sent
 
 def evaluate(gen, oracle, output, no_score=False):
@@ -99,13 +99,15 @@ if __name__ == '__main__':
     pb = PathBuilder(path=args.model)
 
     word_emb = WordEmbeddings(pb.model_params['G']['ed'])
-    oracle = DataLoader(dataset_path, word_emb, pb.train_size, pb.test_size, end_token_str=END_TOKEN, pad_token_str=PAD_TOKEN, gpu=False, light_ver=LIGHT_VER, mode=args.mode)
+    oracle = DataLoader(dataset_path, word_emb, pb.train_size, pb.test_size,
+                        start_token_str=START_TOKEN, end_token_str=END_TOKEN, pad_token_str=PAD_TOKEN,
+                        gpu=False, light_ver=LIGHT_VER, mode=args.mode)
     oracle.load()
-    end_token, pad_token, max_seq_len, vocab_size = oracle.end_token, oracle.pad_token, oracle.max_seq_len, len(oracle.vocab) 
+    start_token, end_token, pad_token, max_seq_len, vocab_size = oracle.start_token, oracle.end_token, oracle.pad_token, oracle.max_seq_len, len(oracle.vocab)
     max_seq_len += pb.model_params['gan']['pad'] 
 
     gen = Generator(pb.model_params['G']['ed'], pb.model_params['G']['hd'], word_emb,
-                    end_token=end_token, pad_token=pad_token, max_seq_len=max_seq_len, gpu=False)
+                    start_token=start_token, end_token=end_token, pad_token=pad_token, max_seq_len=max_seq_len, gpu=False)
 
     # Load model to CPU
     if args.pretrained:

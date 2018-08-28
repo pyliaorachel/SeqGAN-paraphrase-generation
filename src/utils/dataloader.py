@@ -22,11 +22,12 @@ from . import helpers
 
 
 class DataLoader:
-    def __init__(self, filepath, word_emb, train_size=53000, test_size=3000, end_token_str='<E>', pad_token_str='<P>', gpu=False, light_ver=False, mode='train'):
+    def __init__(self, filepath, word_emb, train_size=53000, test_size=3000, start_token_str='<S>', end_token_str='<E>', pad_token_str='<P>', gpu=False, light_ver=False, mode='train'):
         self.filepath = filepath
         self.word_emb = word_emb
         self.gpu = gpu
         self.light_ver = light_ver # Smaller dataset
+        self.start_token_str = start_token_str
         self.end_token_str = end_token_str
         self.pad_token_str = pad_token_str
 
@@ -35,6 +36,7 @@ class DataLoader:
         self.total_samples = self.train_size + self.test_size
         self.mode = mode
 
+        self.start_token = 2
         self.end_token = 1
         self.pad_token = 0
         self.cond_samples = None
@@ -59,7 +61,7 @@ class DataLoader:
         # Build vocab & mapping
         cond_samples = []
         pos_samples = []
-        vocab = [self.end_token_str, self.pad_token_str]
+        vocab = [self.start_token_str, self.end_token_str, self.pad_token_str]
         with open(self.filepath, 'r') as fin:
             fin.readline() # ignore header
             reader = csv.reader(fin, delimiter='\t')
@@ -75,8 +77,8 @@ class DataLoader:
                     q1_tokens = nltk.word_tokenize(q1_str)
                     q2_tokens = nltk.word_tokenize(q2_str)
 
-                    q1 = q1_tokens + [self.end_token_str]
-                    q2 = q2_tokens + [self.end_token_str]
+                    q1 = [self.start_token_str] + q1_tokens + [self.end_token_str]
+                    q2 = [self.start_token_str] + q2_tokens + [self.end_token_str]
                     cond_samples.append(q1)
                     pos_samples.append(q2)
                     vocab += q1_tokens + q2_tokens
@@ -93,6 +95,7 @@ class DataLoader:
         self.pos_samples = [self.sent_to_ints(q) for q in pos_samples[start:end]]
 
         # Map special tokens
+        self.start_token = self.word_to_int[self.start_token_str]
         self.end_token = self.word_to_int[self.end_token_str]
         self.pad_token = self.word_to_int[self.pad_token_str]
         
