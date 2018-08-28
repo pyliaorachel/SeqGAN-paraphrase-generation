@@ -10,10 +10,10 @@ TEACHER_FORCING_UPDATE_EP = 5
 G_PRETRAIN_EPOCHS = 1 if DEBUG else 50
 D_PRETRAIN_STEPS = 1 if DEBUG else 10
 D_PRETRAIN_EPOCHS = 2 if DEBUG else 5
-G_TRAIN_STEPS = 1 if DEBUG else 2
-D_TRAIN_STEPS = 1 if DEBUG else 3
+G_TRAIN_STEPS = 1 if DEBUG else 10
+D_TRAIN_STEPS = 1 if DEBUG else 5
 D_TRAIN_EPOCHS = 1 if DEBUG else 3
-ADV_TRAIN_ITERS = 1 if DEBUG else 10
+ADV_TRAIN_ITERS = 1 if DEBUG else 30
 
 # Embedding dim must be one of those in pretrained word embeddings: 25, 50, 100, 200
 ED = 50 # embedding dim
