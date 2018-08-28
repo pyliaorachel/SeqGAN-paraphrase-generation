@@ -10,10 +10,10 @@ def prepare_generator_batch(oracle, gen, batch_size, gpu=False):
         - target, cond: batch_size x seq_len
         - target_lens, cond_lens: batch_size
     """
-    _, _, cond_ids, end_of_dataset = oracle.sample(batch_size, gpu=gpu)
+    pos_samples, pos_lens, cond_ids, end_of_dataset = oracle.sample(batch_size, gpu=gpu)
     batch_size = len(cond_ids) # update actual sampled batch size
-    cond, cond_lens = oracle.fetch_cond_samples(cond_ids, gpu=gpu)
-    target, target_lens = gen.sample(cond, gpu=gpu)
+    cond_samples, cond_lens = oracle.fetch_cond_samples(cond_ids, gpu=gpu)
+    target, target_lens = gen.sample(cond_samples, gpu=gpu)
 
     target = trim_trailing_paddings(target, target_lens)
 
@@ -21,10 +21,12 @@ def prepare_generator_batch(oracle, gen, batch_size, gpu=False):
     if gpu:
         target = target.cuda()
         target_lens = target_lens.cuda()
-        cond = cond.cuda()
+        pos_samples = pos_samples.cuda()
+        pos_lens = pos_lens.cuda()
+        cond_samples = cond_samples.cuda()
         cond_lens = cond_lens.cuda()
 
-    return target, target_lens, cond, cond_lens, end_of_dataset 
+    return target, target_lens, pos_samples, pos_lens, cond_samples, cond_lens, end_of_dataset
 
 def prepare_discriminator_data(oracle, gen, batch_size, is_val=False, on_cpu=True, gpu=False, gpu_limit=None):
     """
