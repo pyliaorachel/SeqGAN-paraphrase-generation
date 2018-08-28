@@ -22,7 +22,7 @@ from . import helpers
 
 
 class DataLoader:
-    def __init__(self, filepath, word_emb, train_size=53000, test_size=30000, start_token_str='<S>', end_token_str='<E>', pad_token_str='<P>', gpu=False, light_ver=False, mode='train'):
+    def __init__(self, filepath, word_emb, train_size=53000, test_size=3000, start_token_str='<S>', end_token_str='<E>', pad_token_str='<P>', gpu=False, light_ver=False, mode='train'):
         self.filepath = filepath
         self.word_emb = word_emb
         self.gpu = gpu
