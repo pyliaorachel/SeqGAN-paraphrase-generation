@@ -6,15 +6,16 @@ def prepare_generator_batch(oracle, gen, batch_size, gpu=False):
     """
     Returns samples (a batch) sampled from generator. 
 
-    Returns: inp, inp_lens, cond, cond_lens, end_of_dataset
-        - inp, cond: (batch_size * 2) x seq_len
-        - inp_lens, cond_lens: (batch_size * 2)
-        - cond_lens: (batch_size * 2)
+    Returns: target, target_lens, cond, cond_lens, end_of_dataset
+        - target, cond: batch_size x seq_len
+        - target_lens, cond_lens: batch_size
     """
     _, _, cond_ids, end_of_dataset = oracle.sample(batch_size, gpu=gpu)
     batch_size = len(cond_ids) # update actual sampled batch size
     cond, cond_lens = oracle.fetch_cond_samples(cond_ids, gpu=gpu)
     target, target_lens = gen.sample(cond, gpu=gpu)
+
+    target = trim_trailing_paddings(target, target_lens)
 
     # Put to GPU
     if gpu:
