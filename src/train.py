@@ -99,11 +99,12 @@ def train_generator_PG(gen, gen_opt, dis, oracle, rollout, g_steps, adv_iter, sa
         rollout.load_state_dict(gen.state_dict())
 
         # Sample from generator
-        target, target_lens, cond, cond_lens, end_of_dataset = helpers.prepare_generator_batch(oracle, gen, BATCH_SIZE, gpu=CUDA)
+        target, target_lens, pos_samples, pos_lens, cond_samples, cond_lens, end_of_dataset \
+                = helpers.prepare_generator_batch(oracle, gen, BATCH_SIZE, gpu=CUDA)
 
         # MC search for reward estimation 
         rollout_targets, rollout_target_lens, rollout_cond, rollout_cond_lens \
-                = rollout.rollout(target, target_lens, cond, cond_lens, ROLLOUT_NUM, gpu=CUDA)
+                = rollout.rollout(target, target_lens, cond_samples, cond_lens, ROLLOUT_NUM, gpu=CUDA)
         rollout_cond_shape = rollout_cond.shape
         rollout_targets_shape = rollout_targets.shape
 
@@ -114,17 +115,23 @@ def train_generator_PG(gen, gen_opt, dis, oracle, rollout, g_steps, adv_iter, sa
                               rollout_cond_lens.view(-1)
                           ).view(rollout_targets_shape[:-1])
         rollout_rewards = torch.mean(rollout_rewards, -1)
-        rewards = dis.batchClassify(target, target_lens, cond, cond_lens).unsqueeze(0)
+        rewards = dis.batchClassify(target, target_lens, cond_samples, cond_lens).unsqueeze(0)
         total_rewards = torch.cat([rollout_rewards, rewards])
 
         # Train
         gen_opt.zero_grad()
-        loss = gen.batchPGLoss(cond, target, total_rewards, gpu=CUDA)
+        loss = gen.batchPGLoss(cond_samples, target, total_rewards, gpu=CUDA)
         loss.backward()
         gen_opt.step()
 
         # Accumulate loss
         total_loss += loss.item() * len(target)
+
+        # MLE Train
+        gen_opt.zero_grad()
+        loss = gen.batchNLLLoss(cond_samples, cond_lens, pos_samples, pos_lens, teacher_forcing_ratio=1, gpu=CUDA)
+        loss.backward()
+        gen_opt.step()
 
         total_samples += len(target)
         i += 1

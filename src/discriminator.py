@@ -93,7 +93,9 @@ class Discriminator(nn.Module):
         genuine = out[sort_idx] # unsort to original ordering
         genuine = torch.sigmoid(genuine)
 
-        return (match + genuine) / 2
+        # There are many ways to combine the two scores, and it all depends on how quick the model can find the right scaling;
+        # from experiment, (match + genuine) / 2 is less stable than match * genuine
+        return match * genuine
 
     def batchClassify(self, inp, inp_lens, cond, cond_lens):
         """
