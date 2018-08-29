@@ -34,7 +34,7 @@ class Attention(nn.Module):
         combined = torch.cat([context, h], dim=-1) # batch_size x inp_seq_len x (hidden_dim * 2)
 
         # Compute attention score
-        attn_score = torch.matmul(combined, self.attention).squeeze()   # batch_size x inp_seq_len
+        attn_score = torch.matmul(combined, self.attention).squeeze(-1) # batch_size x inp_seq_len
         attn_score = torch.softmax(attn_score, dim=1).unsqueeze(-1)     # batch_size x inp_seq_len x 1
 
         # Apply scores as weights & sum across timesteps
