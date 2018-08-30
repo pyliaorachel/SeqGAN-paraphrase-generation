@@ -1,0 +1,101 @@
+original (cond)	sample (pos)	generated (neg)	BLEU	METEOR
+how do i improve my writing skills ?	how can i improve my writing skills to write advanced composition ?	how do i improve my writing skills ?	0.9999999997410718	1.0
+what are the best books for c++ ?	what are some books to learn c++ ?	what is the best books for c++ ?	0.7905694148373941	0.96
+what is the best new movie to watch ?	what is the best new movie ?	what is the best new movie of time ?	0.6972166886186177	0.5188278252886968
+what are the safety precautions on handling shotguns proposed by the nra in california ?	what are the safety precautions on handling shotguns proposed by the nra in kansas ?	what are the safety precautions on handling shotguns proposed by the nra in india ? in the nra to	0.7008766440125496	0.5160290886606187
+does smoking weed cause cancer ?	how can smoking marijuana give you lung cancer ?	does smoking weed cause weed cancer ?	0.7559289459014655	0.504175137209835
+how do i lose weight ?	how do i lose 30 pounds ?	how do i lose lose weight ?	0.8451542544769828	0.5022125177310769
+how can i get a hacker ?	how do i get in touch with hackers ?	how can i get into hacker ?	0.7559289457934757	0.47848159656356454
+can i make money online ?	how do you make easy money online ?	what can i make money online bhk online ?	0.6454972242916984	0.47664833374148197
+how can i improve in english ?	how can improve my english speaking ?	how do i improve my english speaking ?	0.7905694149362151	0.47628347206877775
+what are the best ways to improve english ?	how can i understand english ?	what is the best way to improve my english ?	0.48304589148865984	0.465084374671924
+how do i to start a new business ?	how can i start my business ?	how can i start my business overlay you start about redmi rs . inr	0.4059989714404598	0.4632394417275632
+how could i increase my height ?	how do i increase my height after 16 ?	how can some 16 without skinny ? should i increase my height ?	0.42365927283421473	0.4550569623398681
+what are the safety precautions on handling shotguns proposed by the nra in north carolina ?	what are the safety precautions on handling shotguns proposed by the nra in vermont ?	what are the safety precautions proposed by the nra precautions on handling shotguns proposed	0.792921578975471	0.448948223709267
+what was the universe before big bang ?	what happened before the big bang ?	what was the universe exist before the universe after exist next big bang ?	0.5135525909750024	0.4480658131667026
+what is an easy way make money online ?	what are the best ways to make money online ?	what are some ways to make money online ?	0.8164965807406125	0.4462690782992373
+how can i prepare for cat 2017 ?	what should be strategy for cat 2017 ?	how can i prepare for 2017 ?	0.791347633590941	0.4455761913762616
+what is the best way to do sex ?	how can i have sex ?	what is the best way to sex in sex ?	0.7302967432631348	0.44513063677296366
+what 's your new year resolution for 2017 ?	what is your new year resolution for 2017 or goal for 2017 ?	which is your new year resolution for 2017 that your resolution for 2017 ?	0.6629935440826179	0.44498275103214935
+what is computer science about ?	what is computer science ?	what are computer computer computer science ?	0.43643578040444125	0.4448605116078899
+what is the best laptop within 60k available in india ?	which is the best laptop under inr 60k ?	what is the best laptop for the inr 60k ?	0.7302967432631348	0.43969933457361193
+how can i earn from online ?	how can i earn money part time online ?	how can i earn earn money online online ?	0.6972166886186177	0.43804653206523514
+`` how do i get rid of acne and acne… ?	how can i get rid of pimples all over my face ?	how can i get rid of acne and acne ?	0.7570412980273764	0.43788517801384824
+which is the best quickbooks error support number ?	which is the best quickbooks proadvisor tech support number ?	what is the best quickbooks customer support number ?	0.6972166886186177	0.4362280240375045
+how can i make money online for job ?	what is the easy way to make money online ?	how can i make money online ?	0.7514772928516321	0.43449266989344915
+how can i earn money part time online ?	what are the easiest ways to earn money online ?	how can i earn money online ?	0.7514772928516321	0.43449266989344915
+what is the quickbooks support phone number ?	what is the quickbooks support phone number in los angeles ?	what is the quickbooks customer support number quickbooks customer support number phone number ?	0.46880723090372134	0.4336893699634929
+can i earn money online ?	how do we make money online ?	what are i earn money online with google ?	0.45643546453375383	0.4317763789135402
+why is saltwater taffy candy imported in china ?	why is saltwater taffy candy imported in germany ?	why is saltwater taffy candy imported in south taffy candy imported in south with south	0.44721359546907896	0.43112686680833734
+how do i get rid of acne on my face ? i workout daily and wash my face twice a day .	`` how do i get rid of acne and acne… ?	how do i get rid of acne acne ?	0.653799351552692	0.43110718106222146
+how do i change my profile photo in here on quora ?	how can i upload profile picture on quora ?	how can i upload on quora mail on quora picture in quora profile ?	0.4688072309037214	0.4292677621352505
+what is the best way to become a billionaire ?	how can i become a billionaire ?	what is the best way to become average ?	0.7306332424911985	0.42767453337010247
+how do i improve professional email writing skills ?	how do i improve my email writing skills ?	how can i improve my writing skills ?	0.6240195440321152	0.42753048044964315
+how can i slowly lose weight ?	how do i lose 20-30 kg ?	how can i lose weight ?	0.8464817245943457	0.42750933026297866
+how can i lose weight effectively ?	how can i lose weight slowly and naturally ?	how can i lose weight ?	0.757116271161685	0.42750933026297866
+what is your resolution for 2017 ?	what can be my new year resolution for 2017 ?	what is your new year resolution your 2017 ?	0.6669738469592859	0.4214732311961696
+how do i get web design clients ?	what are the most effective ways to get web design client ?	how do i get my web clients ?	0.7071067810034577	0.41949835127950386
+what should i do to earn money online ?	what are the best ways to make money online ?	what is the best ways to learn online online ?	0.5577733509080639	0.416903544761562
+what 's the easiest way to learn chinese ?	what is the best way to learn chinese ?	what is the best way to learn to learn to learn right in teeth	0.48038446137962854	0.4136533445295576
+what is the best digital marketing company in hyderabad ?	what are the best digital marketing companies in hyderabad ?	what is the best digital marketing marketing digital marketing for digital to market in marketing ( in hyderabad ?	0.4291975376162593	0.4135585856132198
+how could i improve my english pronunciation ?	how can i improve english speaking skill ?	how can i improve my english self-studying ?	0.7905694148373941	0.41020503989073304
+how do we make money online ?	how can i make money online easily ?	how can i best ways to make money for online	0.4472135954527522	0.4087058315658852
+what are some good pyschological movies ?	what are the bet psychological movies ?	what are some good on movies ?	0.7559289457934757	0.4081535928691823
+what do you want more of in your life ?	what do you want in your life ?	what is your life ?	0.3470989551446028	0.4075980904149738
+what is the meaning or purpose of life ?	what is the meaning of this life ?	what is the purpose of life ?	0.791347633590941	0.40713572401126896
+what are the requirements to become a data analyst ?	how do i become a data analyst ?	how do i become software analyst ?	0.6552980968898172	0.4065529905442052
+how can i expand my iq ?	how do i increase iq ?	how do i iq ?	0.7090416307237545	0.4062840465791614
+what are the safety precautions on handling shotguns proposed by the nra in new hampshire ?	what are the safety precautions on handling shotguns proposed by the nra in california ?	what are the nra handling shotguns proposed by proposed by the safety precautions nra kansas ?	0.670820393164687	0.4004353641751401
+what 's the best way to learn faster ?	how can i learn faster ?	how can some good to learn new way to learn faster ?	0.5149286504995761	0.39892382834403173
+how do i earn more money through internet/online ?	how can i earn money easily online ?	how can i earn money as money without from earning money online online ?	0.4385290096209864	0.39774453363380413
+why is quora biased against donald trump ?	why is quora biased towards trump ?	why is trump ’ getting `` and overwhelmingly against getting in quora biased towards quora ?	0.316227765996415	0.39697973810018095
+what is the best book for core java for beginners ?	which is the best book for java ?	what are the best book are best java for java programming for java ?	0.46880723090372134	0.39637071584262995
+what would be your new year resolutions for 2017 ?	what are some new year resolutions for 2017 ?	what 's your new year your resolution for 2017 ?	0.5577733509080639	0.3944068677601127
+how do i get rid of acne on my face ? i workout daily and wash my face twice a day .	how do i to get rid of acne scars ?	how do i get rid of acne acne acne acne acne ?	0.6030226891029913	0.39326466037099067
+how do i get rid of my belly fat ?	what should i do for belly fat ?	how can i i lose fat ? how do i get rid of weight ?	0.47809144370074647	0.3918215784768004
+what are the safety precautions on handling shotguns proposed by the nra in south carolina ?	what are the safety precautions on handling shotguns proposed by the nra in arizona ?	what are the nra in the safety precautions on handling shotguns ’ nra in pennsylvania ?	0.670820393164687	0.39121136825951813
+why is saltwater taffy candy imported in mongolia ?	why is saltwater taffy candy imported in brazil ?	or why do saltwater taffy candy imported in czech ?	0.5577733509638411	0.3911406538736633
+why is hillary clinton a better choice than donald trump ?	why would hillary clinton be a better president than donald trump ?	why be a election to coming presidential donald trump better for hillary clinton ?	0.3851644432312519	0.3894264612474901
+how do you keep motivated to lose weight ?	how do i get motivated to lose weight ?	how do you do to lose weight ?	0.6976750598721164	0.38903479932065527
+what are the best way to increase website traffic organically ?	how can i increase the traffic on my website ? jeenkart.com	how can the best way to increase my website traffic .	0.797724035068799	0.38886783159562477
+scientology : how do i become a scientologist ?	what is scientology , how do i become a scientologist ?	how do i become become scientologist ?	0.5680634379421358	0.38807330915583216
+what are the safety precautions on handling shotguns proposed by the nra in california ?	what are the safety precautions on handling shotguns proposed by the nra in wisconsin ?	what are safety precautions on handling shotguns on handling shotguns proposed by the proposed new ’ s territories and nra ?	0.4780914437104221	0.3867841585782603
+how do i learn telepathy ?	how do learn telepathy ?	how do i learn but one learn ?	0.5175491694374511	0.38497544273759704
+how can i become actor ?	how should i become an actor ?	how can i become an ?	0.8944271906868665	0.38497544273759704
+how can i increase the traffic to a website ?	how can i increase website traffic ?	how can i increase the traffic on drive ) ?	0.6236095643341374	0.3849283208833816
+how do i improve my pronunciation of english ?	what are the best ways to improve english ?	how can i improve my english ?	0.4919573682190146	0.3832956636912122
+how should i increase my height ?	how do i increase the height ?	how can skipping increase my height ?	0.5976143044893356	0.3827108813097288
+how can i earn lots of money ?	how do i earn money now ?	how can i earn money how money ?	0.7319250545218838	0.3816110892838245
+why are saltwater taffy imported in japan ?	why is saltwater taffy candy imported in brazil ?	why do saltwater taffy candy imported in water of a austria ?	0.46056618643171326	0.38049737077506024
+how do i delete questions from quora ?	how do i delete a question from quora ?	how do i delete my questions on quora list of my own my questions on quora on quora ?	0.2861316917441729	0.38049737077506024
+how does first time sex feel like ?	what does having sex for the first time feel like ?	how does time time one like to first time feel to feel like her first sex feel like time first time time feel on first first at first ?	0.2219483808014476	0.3796050294217157
+what are some interesting movies in 2016 ?	what are the best movies of 2016 ?	how do the 2016 you be the best movies ?	0.33333333329814824	0.37828872562841886
+where can i buy cricket merchandise online in india ?	where can i buy cricket customize merchandise online in india ?	where can i buy online courses in india ?	0.6669738469592859	0.3763336992258616
+what is quickbooks tech support number in arizona ?	what is the quickbooks customer support phone number usa ?	what is the quickbooks softwares support phone number ?	0.7453559923291194	0.3763336992258616
+why is life so unfair & unjust ?	why is life so unfair ?	why is true unfair unfair ? so unfair in life the life ?	0.3396831102161606	0.3761981078829165
+how can i increase traffic very soon on my blog ?	how can i increase the traffic on my website ? jeenkart.com	how can i increase my traffic of my site for traffic on my blog ?	0.5477225574673472	0.37590634335623546
+how can i ask a long question on quora ?	how do i write longer question details on quora ?	how can i ask questions on quora but quora ?	0.6236095643341374	0.3750870938471759
+how can i contact interesting people on quora ?	how can i contact people on quora ?	how can i someone on quora ?	0.6552980968898172	0.37426358335296867
+how can we control the mind ?	what is the best way to control our mind ?	how do you control the control mind that i to mind way for mind ?	0.2581988897293332	0.37393383470026825
+is there life on mars ?	does life exits on mars ?	is life have a real man on mars ?	0.37267799620596836	0.3732529920528376
+how can i meet my spouse ?	what are the best ways to meet a spouse ?	how can i make my husband ?	0.48795003632904355	0.37321564531958046
+how can i improve my english in all aspects ?	what can i do to improve my english speaking ?	how can i improve my english a classes in speaking skill skill skills ?	0.49724515806196345	0.3720179457943723
+how do i get rid off from porn addiction ?	how can i stop my porn addiction ?	how can i get rid of the porn addiction addiction ?	0.6605782590127613	0.37012811571150683
+why is the sun so big ?	why is the sun big ?	why did the sun ?	0.36614752367478015	0.3695089742277888
+what is make money online ?	how could i make money online ?	what we easiest pictures to make money online with online ?	0.36927447290274934	0.3693032249411673
+how do i start a successful business like a millionaire ?	how do i start a successful business ?	how much and can i manager . how do you start a long do i start a business ? trump ?	0.30860669990912093	0.3689586354931066
+what was the weirdest dream you have had ?	which is the weirdest dream you ’ ve ever had ?	what is time for you 've you dreams you 've ever had ?	0.2773500980903911	0.368690209653082
+how can i slowly lose weight ?	can you offer me any advice on how to lose weight ?	how do i lose weight ?	0.48871645155864424	0.3684126004097294
+what are the best programming languages to learn today ?	what programming language i should learn first ?	what 's the best books to learn to learn first now on programming language can be the best ?	0.32444284224397485	0.36825406805213
+what are the best action movies ?	what are the most enjoyable action movies ?	what are some of all the best movies ?	0.49999999994097233	0.367438201555635
+how do i build more confidence ?	how does i develop self confidence ?	how do i distance the confidence ?	0.5976143044893356	0.3670099220765092
+whats the point of life ?	what 's the point of life ?	what was the point is is life ?	0.4225771273076633	0.366582586666725
+why some of my questions on quora not answered by anyone yet ?	why are some questions not answered on quora ?	why are some questions on quora as googling quora just questions on quora ?	0.48038446137962854	0.3656311227388321
+what is the best way to lose weight and not gain it back ?	what are the best way of loose the weight ?	what is the best way to lose weight . soon to weight ?	0.6290666782162759	0.36556339192503173
+what is dogmatism ? what are some examples ?	what are some examples of dogmatism ?	what is some examples of an	0.5985529676111455	0.3642558267483414
+has history been scientifically tested ?	has ancient japan been scientifically tested ?	have ever been scientifically tested ?	0.6324555318123166	0.36352335336458697
+where can i find a hacker ?	where can i find/employ a real hacker ?	where can i hacker ?	0.5805141882860998	0.36324295806692625
+what is your new year resolution for 2017 or goal for 2017 ?	what are some of the best new years resolutions for 2017 ?	what is your new resolutions for your new resolutions for 2017 2017 ?	0.6201736728486433	0.36085251799953305
+what are some ways to lose weight fast ?	how do i lose 5 kg weight within 7 days ?	what are some ways to commit best way to to lose diet way to lose weight ?	0.42008402518292	0.3602153459912513
+what are your new year resolutions for 2017 ?	what is your new year ’ s resolution ( s ) for 2017 ?	what is your new resolutions for 2017 ? how do you 've 've have do your new for 2017 ?	0.35540932663721736	0.3593998997195531
+what is the death penalty ? what are some advantages and disadvantages ?	what are the advantages and disadvantages of the death penalty ?	what are advantages of advantages of disadvantages of death of cats in cat advantages and disadvantages disadvantages of cat after death penalty ?	0.32667930387375627	0.35892730154071645
