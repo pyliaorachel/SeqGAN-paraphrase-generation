@@ -129,6 +129,8 @@ This is the first sentence. This sentence is the first one. This one is generate
     - Output `*_acc.png` and `*_loss.png`
 - Interactive paraphrase generation
     - `$ python3 -m tools.paraphrase_generation <path-to-pretrained-model-dir>`
+- Find paraphrases with top-n scores
+    - `$ python3 tools/find_good_ex.py <path-to-result-file> <output-filename> -n <n> --metric <metric-to-compare>`
 
 # Project structure
 
@@ -163,6 +165,7 @@ This is the first sentence. This sentence is the first one. This one is generate
 └── tools
     ├── __init__.py
     ├── evaluate.py                   # evaluation script, output generated paraphrases and evaluation scores
+    ├── find_good_ex.py               # find generated samples with the best n scores
     ├── paraphrase_generation.py      # interactive script, generate paraphrase given a sentence
     ├── parse_emb.py                  # parse word embedding vectors and mappings from raw file
     └── visualize_log.py              # visualize loss, acc, etc. information in a given log file`
