@@ -62,7 +62,7 @@ class DataLoader:
         cond_samples = []
         pos_samples = []
         vocab = [self.start_token_str, self.end_token_str, self.pad_token_str]
-        with open(self.filepath, 'r') as fin:
+        with open(self.filepath, 'r', encoding='utf-8') as fin:
             fin.readline() # ignore header
             reader = csv.reader(fin, delimiter='\t')
 
