@@ -1,0 +1,101 @@
+original (cond)	sample (pos)	generated (neg)	BLEU	METEOR
+what is an internship ?	what is an internship and the types of internship ?	what is an internship ?	0.9999999995750004	1.0
+how do i lose weight ?	how do i lose 30 pounds ?	how do i lose weight ?	0.9999999996500001	1.0
+how can i expand my iq ?	how do i increase iq ?	how can i increase iq ?	0.9999999996500001	0.8340707964601769
+scientology : how do i become a scientologist ?	what is scientology , how do i become a scientologist ?	how do i become a scientologist ?	0.7514772928516321	0.48377727061933
+how can i get rid of my depression ?	how can i beat depression ?	how can i get rid depression ?	0.9128709290339994	0.4746383708883552
+what are the best books for c++ ?	what are some books to learn c++ ?	what is are some good books for c++ ?	0.6236095643887031	0.4733366331596553
+why is saltwater taffy candy imported in mongolia ?	why is saltwater taffy candy imported in brazil ?	why is saltwater taffy candy imported in greece ?	0.8164965807406125	0.4673871686116119
+what are the safety precautions on handling shotguns proposed by the nra in washington ?	what are the safety precautions on handling shotguns proposed by the nra in arizona ?	what the safety precautions on handling shotguns proposed by the nra in what is the nra in the nra in the on the kansas ?	0.4654746681066246	0.4638110428570728
+how can learn english ?	how can i become good at english ?	how do you learn advanced for english ?	0.26726124184322303	0.46362240349657124
+how are typhoons formed ?	where can typhoons happen and how are they formed ?	how do typhoons typhoons formed ?	0.5163977793996495	0.4610631722096504
+how does a long distance relationship work ?	does long distance relationship works ?	how does long distance relationship work to relationship ?	0.6972166886960861	0.45853408165169407
+what are the safety precautions on handling shotguns proposed by the nra in michigan ?	what are the safety precautions on handling shotguns proposed by the nra in maine ?	what are the safety precautions on handling shotguns proposed by the ?	0.7425574110071845	0.45708343585742944
+is donald trump racist ?	why do people call trump racist ?	what is the than racist or or donald trump racist ?	0.36927447290274934	0.45124170747111786
+how do i deal with my boss ?	what is the best way to deal with a boss ?	how do i deal with process boss qualified with an work , what i work i deal with deal with my boss ?	0.35285397665703344	0.43915572889681653
+which is world 's best romantic movie ?	what is the most romantic movie ?	what are the best romantic movies movie ?	0.46291004976641537	0.4358925223615073
+what is the best way to prepare for environmental chemistry for jee mains ?	how should i prepare for environmental chemistry for jee mains ( perfectly ) ?	how is the best way to prepare for jee mains ?	0.7222329615241241	0.42804922401645434
+how do i study faster and more efficiently ?	how can i study faster and more efficiently ?	how do i study faster and studying strategy ?	0.6972166886186177	0.4142313536808012
+what are the best bed sheets ? ''	what are the best bed sheets ?	what are some good bed a sheets ?	0.42257712725484126	0.4141014560497727
+what are the greatest novels of all time ?	what is the best novel of all time ?	what is the best novel ?	0.5424975140322226	0.41303192266443156
+how do i prepare for ugc net english literature thoroughly ?	how do i prepare for ugc net english ?	how can i prepare for ugc from english ?	0.6236095643194133	0.4126838796231091
+what are the safety precautions on handling shotguns proposed by the nra in illinois ?	what are the safety precautions on handling shotguns proposed by the nra in florida ?	what are some nra in a safety precautions on handling shotguns proposed	0.5671375906318097	0.4114959033672418
+what are some ways to start a business ?	how do we start a business ?	how are some a ways to start start over on you at business ?	0.44474958996367114	0.40901377787844384
+what are the safety precautions on handling shotguns proposed by the nra in california ?	what are the safety precautions on handling shotguns proposed by the nra in kansas ?	what is are some nra in the safety precautions on handling shotguns proposed by by the safety precautions on handling shotguns proposed ?	0.49901087932565624	0.4086533208417797
+from where can i learn programming ?	how do you learn to program ?	what can i learn programming ?	0.6911494339490882	0.4052740889354935
+what are the safety precautions on handling shotguns proposed by the nra in new hampshire ?	what are the safety precautions on handling shotguns proposed by the nra in california ?	what are people nra in the safety precautions on handling shotguns shotguns proposed by by the safety precautions on handling shotguns proposed by u.s. study for ?	0.4465760846878646	0.4043537268341163
+whats your favorite song ?	what is your favourite song ?	what song apart is your favorite time ?	0.462910049824279	0.4041890385289669
+how can you learn fast ?	how can l learn faster ?	how can i learn faster learn faster ?	0.5175491694374511	0.40347813843506297
+what is the best story you have heard ?	what is the best story you 've ever heard ?	what is the story stories for you 've ever seen experience ?	0.49236596387443554	0.4031548386446502
+which is the best laptop under rs 45000 ?	what are the best laptops for up to inr 45000 ?	which is the best laptop below '' in best laptop under rs ?	0.5547001961807821	0.401484713778085
+how do i enhance my english ?	what should i do to improve my spoken english ?	how do i increase english ?	0.5985529676111455	0.40090300940673285
+how do i improve my writing skills ?	how can i improve my writing skills to write advanced composition ?	how can i improve writing skills ?	0.791347633590941	0.40004508862673077
+which is best mobile under 15000 ?	which are best mobile phones to buy under 15000 ?	what is best under 15000 ?	0.5985529676111455	0.39900870824544665
+how could i gain weight in a healthy way ?	how to gain weight ?	how can one should to gain weight gain weight ?	0.4082482903799455	0.3984971557665561
+how do i delete questions from quora ?	how do i delete a question from quora ?	how can i delete question on quora ?	0.46291004976641537	0.39818659318311295
+how can i change my profile pic on quora ?	how do i upload profile pic in quora ?	how can i profile picture on quora ?	0.6240195440321152	0.39798054325696497
+how can i improve my writing skills for writing a book ?	how can i improve my writing skills to become a better writer ?	how can i improve my writing skills ?	0.5615382757448638	0.3957713927759617
+what the meaning of this all life ?	what is a meaning of life ?	what exactly of the meaning of life ?	0.6546536705384689	0.39338102008994635
+how can i improve my spoken english ability ?	how do i improve my overall native english language ?	how can i improve my english which speaking today ?	0.5577733509080639	0.3929764595360975
+what are the best ways to lose weight ? what is the best diet plan ?	what are the ways of losing weight ?	what is the best way to lose weight ?	0.8164965808313341	0.3924542776807998
+how can we control the mind ?	what is the best way to control our mind ?	how can you control mind ?	0.48871645155864424	0.39229486540443065
+what is concrete ?	what is a concrete ?	what makes prepaid serve concrete ?	0.31622776595886304	0.39168089426809116
+how do you improve your writing skills ?	how do i improve my english writing and speaking skills ?	how do i improve my writing skills ?	0.9258200995328305	0.3906546829632619
+how do i start learning c language ?	how should i start to learn c language ?	how can i start learning c programming ?	0.5669467093670424	0.3902093868369036
+what is the fastest way to learn something ?	how can i learn faster ?	how can i learn ?	0.7090416307237545	0.3899751238121113
+how do i to start a new business ?	how can i start my business ?	how do i start money with business ?	0.6546536706203004	0.3899344179774085
+how do i get call girls in hyderabad ?	where i get call girls in hyderabad ?	how do i get dress in hyderabad ?	0.7905694148373941	0.38903479932065527
+which book is best for study of gre ?	what is the best book to study for the gre ?	what is the best book for gre ?	0.7458460118109875	0.3888351953987754
+which is your favourite film in 2016 ?	what movie is the best movie of 2016 ?	what is the best day in 2016 your favourite movie or a film ?	0.4916891718579703	0.38754085585399295
+how does the hp officejet 4620 airprint compare to the hp designjet t795 44-in printer ?	how does the hp officejet 4620 airprint compare to the hp deskjet 1112 printer ?	how does the hp officejet 4620 airprint compare to ?	0.5718425898562594	0.38696641492271566
+what are the funniest memes made in 2016 ?	what are the funniest memes of 2016 ?	what are the funniest memes ?	0.6408850871556931	0.3868321365252699
+how can i make money online for job ?	what is the easy way to make money online ?	how do i make money online ?	0.5680634379421358	0.3862488974313135
+does smoking weed cause cancer ?	how can smoking marijuana give you lung cancer ?	is smoking weed cause ?	0.5178107938101979	0.38256155283813625
+daniel ek : why is spotify not available in india ?	why has n't daniel ek brought spotify to india ?	why spotify n't people daniel ek spotify in india ?	0.516397779388174	0.3801082350057546
+how do you make money with quora ?	how can you earn a living on quora ?	how can you earn if quora ?	0.6552980968898172	0.3792841923979475
+what are the differences between chinese culture and western culture ?	what are the differences between chinese and western cultures ?	what are some differences between our culture western culture ?	0.5962847938773745	0.3762824471073024
+which is the best seo tools ?	which is the best seo tool ?	which is the best an seo ?	0.6546536705131399	0.37611784411206733
+where can i find a professional hacker ?	how will i contact a good hacker ?	how do i find for a good hacker ?	0.6236095643887031	0.37555512998260443
+what was the weirdest dream you have had ?	which is the weirdest dream you ’ ve ever had ?	what is the weirdest dream the ever ?	0.5404167775897939	0.3743211249678672
+what is the best way to learn data structures ?	how do i start learning data structures ?	how can i data for data is the best way to learn questions on foreign ?	0.45643546455816036	0.3720179457943723
+what is the best way to learn and practice c programming ?	what 's the easiest way to learn c ?	what is the best simple c ways to learn javascript programming programming and i learn programming ?	0.42874646283026363	0.3719897680815733
+how do you stalk your crush ?	how do you `` stalk '' your crush ?	how do you out of tailor your crush for an example ?	0.3692744729058266	0.3704917046156541
+what does surgical strike mean ?	what is the meaning of surgical strike ?	what is the surgical to surgical strike ?	0.6546536705384689	0.37025361638847254
+how do you lose belly fat ?	how can i lose body fat in my belly and chest ?	how can i reduce belly fat ?	0.7559289457934757	0.37014002678226293
+what 's your new year resolution for 2017 ?	what are the resolutions you are going to take for the upcoming new year 2017 ?	what is your resolution for 2017 ?	0.4919573682190146	0.36861967487253416
+how can i lose weight quickly ?	how should i reduce weight easily ?	how do i lose weight ?	0.48871645155864424	0.3684126004097294
+how effective is scrapping 500 and 1000 rupee notes ? will it reduce black money ?	how can scrapping use of 500 and 1000 rupee currency notes in india solve problem of corruption ?	how can scrapping notes for black money by changing money and 1000 rupees notes ? curbing way to reduce money to black money scrapping 500 and 1000 rupee notes ?	0.36671890953640446	0.3672687842058697
+what is the best way to get a tan ?	what is the best way to tan faster outside ?	what is the best ways to get the best way ?	0.6030226890979661	0.36245936413618196
+what are the arguments for keeping the electoral college ?	what 's the argument for the electoral college ?	what do people pros do for high arguments for the electoral college ?	0.4736654666777171	0.3624029892243245
+how can one make money online ?	what is make money online ?	where is the best way to make best online on the best way to earn make money online ?	0.20942695413451914	0.36226424688830255
+how can i earn lots of money ?	how do i earn money now ?	how can i earn money should ?	0.7559289457934757	0.3616426463260509
+which is the best course for digital marketing ?	where can i find an online course for digital marketing ?	what is the best lyrics marketing course for digital marketing course course as the best digital nice marketing institute in digital marketing course course ?	0.2581988897366181	0.3604013742356462
+why are people so excited and motivated to post answers on quora ?	why do people answer in quora ?	why do i seem you have in quora ?	0.45643546453375383	0.3598136490946168
+why spotify is not available in india ?	when will spotify launch in india ?	why do you and available in india ?	0.5175491693727575	0.3595695637271572
+what is the best way to do sex ?	how can i have sex ?	how do i find sex ?	0.40824829032097637	0.35931620406776715
+which is the best service daikin air conditioner service center in hyderabad ?	which is the best service daikin air conditioner repair center in hyderabad ?	where can the best air and why is the best conditioner service center air conditioner center in hyderabad ?	0.4836508333805121	0.3580276010491186
+what are the best books to prepare for clat 2017 ?	which is best book for preparing clat 2017 ?	what are the best books for 2017 ?	0.7458460118109875	0.3557013692244437
+why is india bothered about cpec ?	why does india so scared of cpec ?	why does india and why does cpec ?	0.5175491693727575	0.3555237695226989
+how can i lose weight effectively ?	how can i lose weight slowly and naturally ?	how do i lose weight , fat ?	0.4225771273076633	0.35534921464682045
+how can we earn money online in india ?	how can i make money online consistently ?	how do i earn money in india ?	0.6123724355372341	0.3550160482420082
+how can i add pictures on quora ?	how do i insert a picture in quora ?	how do i upload picture on quora ?	0.7071067810034577	0.3547679187433717
+what are the best c++ books ?	what are the top c++ books ?	what are the c++ ?	0.4739878499156347	0.35446724515005207
+how do i become a penetration tester ?	what is the way to become a penetration tester ?	how do i become a computer ?	0.6552980968898172	0.354430812269307
+how can we earn on youtube ?	how can i earn money through youtube ?	how can i make youtube from youtube ?	0.5175491693727575	0.35435137419836504
+how can i lose weight ?	what are the best ways to lose a lot of weight as quickly as possible ?	how can i lose from it quickly fats ?	0.49999999994097233	0.35327158274744197
+what is your new year resolution for 2017 or goal for 2017 ?	what are some of the best new years resolutions for 2017 ?	what is your new year late for 2017 will your new year 's year resolutions in 2017 ?	0.4428074427447238	0.35313968110277005
+how do i prepare for the sat ?	how do i prepare for sat exams ?	how do i prepare thai of era best way to make a redesigned exams ?	0.33806170186806433	0.35313726915883514
+what are the best ways to improve english ?	how can i understand english ?	how can i live reading to become a english by you do i improve my english ?	0.27785946509625026	0.35245528459899755
+what are you favorite book ?	what are your top 10 favorite reads ?	what is the most get who is your favourite book 's the favorite book ?	0.21821789022092503	0.3523431195375391
+what is the best way to control your anger ?	what is the best treatment for controlling anger ?	what is the best good 's your anger ?	0.6972166886186177	0.3517111561370999
+what is the best video game ?	what are the best video games to play ?	what is the best valuable games ?	0.6546536705131399	0.350886504146614
+does a long distance relationship really work ?	how will long distance relationship work ?	how does time distance relationship ?	0.34557471697454434	0.35079013323089125
+how can i slowly lose weight ?	can you offer me any advice on how to lose weight ?	how can i lose weight quickly 50 years of the saudi ?	0.3692744728750537	0.35058323818152326
+what are the best programming languages to learn today ?	what programming language i should learn first ?	what are the best programming languages or can we scratch ?	0.5640760747639226	0.3490533892141495
+how was your 2016 ?	how 's your 2016 ?	how are the 2016 ?	0.38729833445614026	0.3482077910069289
+why is saltwater taffy candy imported in china ?	why is saltwater taffy candy imported in germany ?	why do saltwater taffy candy much taffy candy imported in greece ?	0.46056618643171326	0.3479049801893418
+what are the safety precautions on handling shotguns proposed by the nra in rhode island ?	what are the safety precautions on handling shotguns proposed by the nra in kansas ?	what are the safety precautions on handling shotguns ?	0.4802577388710646	0.347419620634635
+how do i upload photo on quora ?	how do i upload my photo on quora ?	how can i upload quora ?	0.4136895448977815	0.34741308218637473
+how do i get traffic on website ?	how can i get traffic in my website ?	how can i get traffic ?	0.6408850871556931	0.34741308218637473
+how does one cope with existential depression ?	how does one avoid existential depression ?	how do i deal a pokémon anxiety of existential depression by life ?	0.16012815379225645	0.34659944605042087
+how do i become more approachable ?	how can i be more approachable ?	how do i become a great estate estate ?	0.45643546453375383	0.3462357755438766

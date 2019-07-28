@@ -282,8 +282,8 @@ if __name__ == '__main__':
         train_discriminator(dis, dis_optimizer, gen, oracle, D_PRETRAIN_STEPS, D_PRETRAIN_EPOCHS, -1, pb.model_pretrain_path('dis'))
         # dis.load_state_dict(torch.load(pb.model_pretrain_path('dis')))
     else:
-        gen.load_state_dict(torch.load(pb.model_pretrain_path('gen')))
-        dis.load_state_dict(torch.load(pb.model_pretrain_path('dis')))
+        gen.load_state_dict(torch.load(pb.model_path('gen')))
+        dis.load_state_dict(torch.load(pb.model_path('dis')))
 
     '''Adversarial training'''
 

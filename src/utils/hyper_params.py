@@ -1,19 +1,19 @@
 from .static_params import *
 
 
-MAX_SEQ_LEN_PADDING = 10 # length limit for generated sequences = max length of all observed sequences in dataset + padding
+MAX_SEQ_LEN_PADDING = 5 # length limit for generated sequences = max length of all observed sequences in dataset + padding
 BATCH_SIZE = 16
 ROLLOUT_NUM = 3 # for Monte Carlo search
 TEACHER_FORCING_RATIO = 0.9
 TEACHER_FORCING_RATIO_DECR_STEP = 0.05
 TEACHER_FORCING_UPDATE_EP = 5
 G_PRETRAIN_EPOCHS = 1 if DEBUG else 50
-D_PRETRAIN_STEPS = 1 if DEBUG else 10
+D_PRETRAIN_STEPS = 1 if DEBUG else 15
 D_PRETRAIN_EPOCHS = 2 if DEBUG else 5
-G_TRAIN_STEPS = 1 if DEBUG else 10
+G_TRAIN_STEPS = 1 if DEBUG else 5
 D_TRAIN_STEPS = 1 if DEBUG else 5
 D_TRAIN_EPOCHS = 1 if DEBUG else 3
-ADV_TRAIN_ITERS = 1 if DEBUG else 30
+ADV_TRAIN_ITERS = 1 if DEBUG else 70
 
 # Embedding dim must be one of those in pretrained word embeddings: 25, 50, 100, 200
 ED = 50 # embedding dim
