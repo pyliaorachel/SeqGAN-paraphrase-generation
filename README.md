@@ -1,5 +1,9 @@
 # SeqGAN Paraphrase Generation
 
+A neural network model based on SeqGAN that generates paraphrases for a given sentence.
+
+Details can be found in the [final report](https://github.com/pyliaorachel/SeqGAN-paraphrase-generation/blob/master/final_report.pdf).
+
 # Dataset
 
 - [Quora](https://data.quora.com/First-Quora-Dataset-Release-Question-Pairs)
